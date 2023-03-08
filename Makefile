@@ -7,7 +7,7 @@ help:
 all: clean install test 
 
 test:
-	pytest pydaria/tests -v
+	pytest avaliacao/tests -v
 
 install:
 	pip install --upgrade pip
