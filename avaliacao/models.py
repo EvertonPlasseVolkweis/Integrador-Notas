@@ -14,23 +14,74 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String(140))
     password = db.Column(db.String(512))
 
-
-class NotaAvalia(db.Model, SerializerMixin):
+class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    valor = db.Column(db.Numeric)
-    comentario = db.Column(db.String(255))
-    fk_avaliacao_id = db.Column(db.Integer, db.ForeignKey('avaliacao.id'))
-    fk_habilidade_atitude_id = db.Column(db.Integer, db.ForeignKey('habilidade_atitude.id'))
+    cpf = db.Column(db.String(255), unique=True, nullable=False)
+    login = db.Column(db.String(255), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    senha = db.Column(db.String(255), nullable=False)
+    fk_id_grupo = db.Column(db.Integer, db.ForeignKey('grupo.id'))
+    fk_id_perfil = db.Column(db.Integer, db.ForeignKey('perfil.id'))
+    data_cadastro = db.Column(db.Integer)
+    nome = db.Column(db.String(255), nullable=False)
+    ra = db.Column(db.Integer, unique=True, nullable=False)
+    grupo = db.relationship('Grupo', backref='usuarios')
+    perfil = db.relationship('Perfil', backref='usuarios')
 
-class Avaliacao(db.Model, SerializerMixin):
+class Grupo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(60))
-    descricao = db.Column(db.String(255))
-    notas = db.relationship('NotaAvalia', backref='avaliacao')
+    grupo = db.Column(db.String(255), nullable=False)
 
-class HabilidadeAtitude(db.Model, SerializerMixin):
+class Perfil(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(60))
-    fator_peso = db.Column(db.Numeric)
-    descricao = db.Column(db.String(255))
-    notas = db.relationship('NotaAvalia', backref='habilidade_atitude')
+    perfil = db.Column(db.String(255), nullable=False)
+
+class Equipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    apelido = db.Column(db.String(255), nullable=False)
+    nome_projeto = db.Column(db.String(255), nullable=False)
+
+class Sala(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    numero = db.Column(db.String(255), nullable=False)
+    turno = db.Column(db.String(255), nullable=False)
+
+class Disciplina(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(255), nullable=False)
+    ementa = db.Column(db.String(255), nullable=False)
+
+class Avaliacao(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(255), nullable=False)
+    descricao = db.Column(db.String(255), nullable=False)
+    data_inicio = db.Column(db.Integer, nullable=False)
+    data_fim = db.Column(db.Integer, nullable=False)
+    fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+    usuario = db.relationship('Usuario', backref='avaliacoes')
+
+class HabilidadeAtitude(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(255), nullable=False)
+    fator_peso = db.Column(db.Float, nullable=False)
+    descricao = db.Column(db.String(255), nullable=False)
+
+class NotaAvalia(db.Model):
+    fk_id_avaliacao = db.Column(db.Integer, db.ForeignKey('avaliacao.id'), primary_key=True)
+    fk_id_habilidade_atitude = db.Column(db.Integer, db.ForeignKey('habilidade_atitude.id'), primary_key=True)
+    comentario = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.Float, nullable=False)
+    avaliacao = db.relationship('Avaliacao', backref='notas_avaliacoes')
+    habilidade_atitude = db.relationship('HabilidadeAtitude', backref='notas_avaliacoes')
+
+class Turma(db.Model):
+    fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), primary_key=True)
+    fk_id_sala = db.Column(db.Integer, db.ForeignKey('sala.id'), primary_key=True)
+    fk_id_disciplina = db.Column(db.Integer, db.ForeignKey('disciplina.id'), primary_key=True)
+    fk_id_equipe = db.Column(db.Integer, db.ForeignKey('equipe.id'))
+    fk_id_avaliacao = db.Column(db.Integer, db.ForeignKey('avaliacao.id'))
+    usuario = db.relationship('Usuario', backref='turmas')
+    sala = db.relationship('Sala', backref='turmas')
+    disciplina = db.relationship('Disciplina', backref='turmas')
+    equipe = db.relationship('Equipe', backref='turmas')
+    avaliacao = db.relationship('Avaliacao', backref='turmas')
