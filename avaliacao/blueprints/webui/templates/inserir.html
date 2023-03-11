@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <h1>Inserir Notas</h1>
-        <form action="/" method="POST">
+        <form action="/notas", method="post">
             {% for categoria in matriz_avaliacao %}
             <h2>{{ categoria[0] }}</h2>
             <div class="form-group">
@@ -23,7 +23,7 @@
                     name="{{ categoria[0] }}-{{ criterio }}" required>
                 {% endfor %}
             </div>
-            {% if len(categoria) > 2 %}
+            {% if loop.index == 2 %}
             <h3>Avaliação 360º</h3>
             <div class="form-group">
                 {% for avaliador, peso in categoria[3].items() %}

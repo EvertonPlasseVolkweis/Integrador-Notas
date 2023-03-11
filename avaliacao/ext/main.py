@@ -57,15 +57,21 @@ def inserir_notas():
                 nota = float(request.form[f"{categoria[0]}-{criterio}"])
                 notas_categoria.append(nota)
             notas.append(notas_categoria)
-        
+            if len(categoria) > 2:
+                avaliacoes_360 = {}
+                for avaliador, peso in categoria[3].items():
+                    nota = float(request.form[f"{categoria[0]}-{avaliador}"])
+                    avaliacoes_360[avaliador] = nota
+                notas[-1].append(avaliacoes_360)
+
         todas_notas.append(notas)
         media_total = calcular_media(todas_notas)
+
+        print(media_total)
 
         salvar_notas_json(todas_notas)
 
         return render_template("inserido.html", media_total=media_total)
-
-    return render_template("inserir.html", matriz_avaliacao=MATRIZ_AVALIACAO)
 
 if __name__ == '_main_':
     app.run()
