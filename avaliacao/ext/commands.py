@@ -1,7 +1,6 @@
 import click
 from avaliacao.ext.database import db
 from avaliacao.ext.auth import create_user
-from avaliacao.models import Product
 
 
 def create_db():
