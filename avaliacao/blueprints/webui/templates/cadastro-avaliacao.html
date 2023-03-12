@@ -1,37 +1,79 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Minha Tela de Avaliação</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Nova Avaliação</h2>
-      <form>
-        <div class="form-group">
-          <label for="nome">Nome da Avaliação:</label>
-          <input type="text" class="form-control" id="nome" placeholder="Digite o nome da avaliação">
-        </div>
-        <div class="form-group">
-          <label for="descricao">Descrição:</label>
-          <textarea class="form-control" id="descricao" rows="3" placeholder="Digite uma descrição para a avaliação"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="usuarios">Usuários:</label>
-          <select class="form-control" id="usuarios">
-            <option value="">Selecione um usuário</option>
-            <option value="usuario1">Usuário 1</option>
-            <option value="usuario2">Usuário 2</option>
-            <option value="usuario3">Usuário 3</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
-      </form>
-    </div>
-  </body>
+
+<head>
+  <title>Minha Tela de Avaliação</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function redirecionaTela() {
+      window.location.replace('/inserir-notas')
+    }
+    $(function () {
+      $('#meu-form').on('submit', function (event) {
+        event.preventDefault(); // Previne o envio padrão do formulário
+
+        var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
+        var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
+
+        // Converte os dados para um objeto JSON
+        var dados_json = {};
+        $.each(dados, function () {
+          dados_json[this.name] = this.value;
+        });
+
+        // Envia a requisição POST com o cabeçalho Content-Type: application/json
+        $.ajax({
+          url: url,
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify(dados_json),
+          success: function (resultado) {
+            // Processa a resposta da requisição
+            localStorage.removeItem('avaliacao-salva')
+            localStorage.setItem('avaliacao-salva', resultado);
+            setTimeout(redirecionaTela, 1000);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            // Trata o erro da requisição
+            console.error(errorThrown);
+          }
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Nova Avaliação</h2>
+    <form id="meu-form" action="/api/v1/avaliacao/cadastro" , method="post">
+      <div class="form-group">
+        <label for="nome">Nome da Avaliação:</label>
+        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação">
+      </div>
+      <div class="form-group">
+        <label for="descricao">Descrição:</label>
+        <textarea class="form-control" id="descricao" rows="3"
+          placeholder="Digite uma descrição para a avaliação" name="descricao"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="usuarios">Usuários:</label>
+        <select class="form-control" id="usuarios" name="usuario">
+          {% for usuario in usuarios %}
+            <option value={{usuario.id}}>{{usuario.nome}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+  </div>
+</body>
+
 </html>

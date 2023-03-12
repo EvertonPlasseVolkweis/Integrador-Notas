@@ -1,7 +1,8 @@
 import click
+from sqlalchemy import null
 from avaliacao.ext.database import db
 from avaliacao.ext.auth import create_user
-from avaliacao.models import Avaliacao, Disciplina, Equipe, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Sala, Usuario
+from avaliacao.models import Avaliacao, Disciplina, Equipe, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Sala, Usuario, Turma
 from avaliacao.ext.main import MATRIZ_AVALIACAO
 
 habilidades_atitudes = MATRIZ_AVALIACAO[1][1]
@@ -54,6 +55,11 @@ def insert_usuario():
     usuario_aluno = Usuario(cpf='11111111100', login='Aluno', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=20220312, nome='Aluno', ra=222222)
     db.session.add(usuario_profesoor)
     db.session.add(usuario_aluno)
+    db.session.commit()
+
+def insert_turma():
+    nova_turma = Turma(fk_id_usuario=2, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
+    db.session.add(nova_turma)
     db.session.commit()
 
 def create_db():
@@ -133,3 +139,7 @@ def init_app(app):
     @app.cli.command()
     def db_usuario():
         return insert_usuario()
+    
+    @app.cli.command()
+    def db_turma():
+        return insert_turma()
