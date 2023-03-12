@@ -1,8 +1,9 @@
+{% extends 'base.html' %}
 <!DOCTYPE html>
 <html>
 
 <head>
-  <title>Minha Tela de Avaliação</title>
+  <title>{% block title %}Tela de Avaliação{% endblock %}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -51,6 +52,7 @@
 </head>
 
 <body>
+	{% block content %}
   <div class="container">
     <h2>Nova Avaliação</h2>
     <form id="meu-form" action="/api/v1/avaliacao/cadastro" , method="post">
@@ -74,6 +76,7 @@
       <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
   </div>
+	{% endblock %}
 </body>
 
 </html>
