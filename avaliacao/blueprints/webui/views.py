@@ -1,5 +1,7 @@
 from flask import abort, render_template, request
 from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media
+from avaliacao.models import Avaliacao, HabilidadeAtitude, NotaAvalia
+from avaliacao.ext.database import db
 
 
 def index():
