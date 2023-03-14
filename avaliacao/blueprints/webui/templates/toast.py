@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, html
 
-app = Dash(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 toast = html.Div(

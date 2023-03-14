@@ -7,7 +7,8 @@ from werkzeug.security import generate_password_hash
 from avaliacao.ext.database import db
 from avaliacao.models import Usuario
 
-# Proteger o admin com login via Monkey Patch
+# Proteger o admin com login via Monkey 
+#######################################
 AdminIndexView._handle_view = login_required(AdminIndexView._handle_view)
 sqla.ModelView._handle_view = login_required(sqla.ModelView._handle_view)
 admin = Admin()
