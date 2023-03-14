@@ -71,7 +71,7 @@ def drop_db():
     """Cleans database"""
     db.drop_all()
 
-def populate_db():
+def insert_avaliacao():
     nova_avaliacao = Avaliacao(titulo='Avaliação 1', descricao='Primeira Avaliação', 
         data_inicio=20220310, data_fim=20220315, fk_id_usuario=1)
     db.session.add(nova_avaliacao)
@@ -109,8 +109,8 @@ def init_app(app):
         return drop_db()
 
     @app.cli.command()
-    def db_populate():
-        return populate_db()
+    def db_avaliacao():
+        return insert_avaliacao()
     
     @app.cli.command()
     def db_habilidade():
