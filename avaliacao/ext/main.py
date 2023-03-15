@@ -3,6 +3,36 @@ import json
 
 app = Flask(__name__)
 
+MATRIZ_AVALIACAO_TESTE = {
+    'Conhecimentos': {
+        'porcentagem': 70,
+        'Avaliação objetiva': 15,
+        'Unidades de Aprendizagem (Uas)': 10,
+        'Avaliação dissertativa': 30,
+        'Entrega': 15
+    },
+    'Habilidades e Atitudes': {
+        'porcentagem': 30,
+        'Habilidades': {
+            'Comunicação Oral e Escrita': 10,
+            'Cognitivo': 10
+        },
+        'Atitudes': {
+            'Autogestão': 2.5,
+            'Autonomia': 2.5,
+            'Protagonismo': 2.5,
+            'Interação': 2.5
+        }
+    },
+}
+
+    # 'Avaliação 360º': {
+    #     'porcentagem': 30,
+    #     'Autoavaliação': 3,
+    #     'Avaliação da equipe': 3,
+    #     'Avaliação do professor': 24
+    # }
+
 # Define a matriz de avaliação como constante
 MATRIZ_AVALIACAO = [
     # Conhecimentos
