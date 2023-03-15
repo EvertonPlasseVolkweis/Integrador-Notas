@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<style>
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+	{% block content %}
+    <div class="container">
+        <h1>Tabela Avaliação Turma</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Sala</th>
+                    <th>Disciplina</th>
+                    <th>Equipe</th>
+                    <th>Avaliação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.sala }}</td>
+                    <td>{{ item.disciplina }}</td>
+                    <td>{{ item.equipe }}</td>
+                    <td>{{ item.avaliacao }}</td>
+                    <td><button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Visualizar</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+	{% endblock %}
+</body>
+</html>

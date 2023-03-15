@@ -10,3 +10,5 @@ SQLAlchemy-serializer==1.4.1
 Flask-Migrate==4.0.4
 Mako==1.2.4
 alembic==1.9.4
+dash==2.8.1
+dash_bootstrap_components

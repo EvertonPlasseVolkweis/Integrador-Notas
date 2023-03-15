@@ -2,19 +2,7 @@ from avaliacao.ext.database import db
 from sqlalchemy_serializer import SerializerMixin
 
 
-class Product(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(140))
-    price = db.Column(db.Numeric())
-    description = db.Column(db.Text)
-
-
-class User(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(140))
-    password = db.Column(db.String(512))
-
-class Usuario(db.Model):
+class Usuario(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     cpf = db.Column(db.String(255), unique=True, nullable=False)
     login = db.Column(db.String(255), unique=True, nullable=False)
@@ -53,7 +41,7 @@ class Disciplina(db.Model):
 
 class Avaliacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(255), nullable=False)
+    titulo = db.Column(db.String(255), nullable=False, unique=True)
     descricao = db.Column(db.String(255), nullable=False)
     data_inicio = db.Column(db.Integer, nullable=False)
     data_fim = db.Column(db.Integer, nullable=False)
@@ -67,17 +55,19 @@ class HabilidadeAtitude(db.Model):
     descricao = db.Column(db.String(255), nullable=False)
 
 class NotaAvalia(db.Model):
-    fk_id_avaliacao = db.Column(db.Integer, db.ForeignKey('avaliacao.id'), primary_key=True)
-    fk_id_habilidade_atitude = db.Column(db.Integer, db.ForeignKey('habilidade_atitude.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    fk_id_avaliacao = db.Column(db.Integer, db.ForeignKey('avaliacao.id'), nullable=False)
+    fk_id_habilidade_atitude = db.Column(db.Integer, db.ForeignKey('habilidade_atitude.id'), nullable=False)
     comentario = db.Column(db.String(255), nullable=False)
     valor = db.Column(db.Float, nullable=False)
     avaliacao = db.relationship('Avaliacao', backref='notas_avaliacoes')
     habilidade_atitude = db.relationship('HabilidadeAtitude', backref='notas_avaliacoes')
 
 class Turma(db.Model):
-    fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), primary_key=True)
-    fk_id_sala = db.Column(db.Integer, db.ForeignKey('sala.id'), primary_key=True)
-    fk_id_disciplina = db.Column(db.Integer, db.ForeignKey('disciplina.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    fk_id_sala = db.Column(db.Integer, db.ForeignKey('sala.id'), nullable=False)
+    fk_id_disciplina = db.Column(db.Integer, db.ForeignKey('disciplina.id'), nullable=False)
     fk_id_equipe = db.Column(db.Integer, db.ForeignKey('equipe.id'))
     fk_id_avaliacao = db.Column(db.Integer, db.ForeignKey('avaliacao.id'))
     usuario = db.relationship('Usuario', backref='turmas')

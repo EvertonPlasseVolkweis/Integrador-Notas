@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,12 +9,73 @@
     <title>Inserir Notas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function redirecionaTela() {
+            window.location.replace('/inserir-notas')
+        }
+        $(function () {
+            $('#meu-form').on('submit', function (event) {
+                event.preventDefault(); // Previne o envio padrão do formulário
+
+                var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
+                var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
+
+                // Converte os dados para um objeto JSON
+                var dados_json = {};
+                for (var i = 0; i < dados.length; i++) {
+                    var partes = dados[i].name.split("-"); // Divide o nome em duas partes separadas por hífen
+                    dados_json[partes[1].trim()] = dados[i].value; // Atualiza o nome do objeto JSON com o texto após o hífen
+                }
+                console.log(dados_json);
+                // Envia a requisição POST com o cabeçalho Content-Type: application/json
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dados_json),
+                    success: function (resultado) {
+                        // Processa a resposta da requisição
+                        setTimeout(redirecionaTela, 1000);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Trata o erro da requisição
+                        console.error(errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+        <a class="navbar-brand" href="/">Avaliação 360</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cadastrar-avaliacao">Cadastrar Avaliação</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tabela-avaliacao-turma">Tabela Avaliações</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="container">
         <h1>Inserir Notas</h1>
-        <form action="/notas", method="post">
+        <form id="meu-form" action="/api/v1/nota-avalia/cadastro", method="post">
             {% for categoria in matriz_avaliacao %}
             <h2>{{ categoria[0] }}</h2>
             <div class="form-group">
