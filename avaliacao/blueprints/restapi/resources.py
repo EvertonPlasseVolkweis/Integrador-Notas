@@ -1,8 +1,8 @@
-from flask import abort, jsonify, request
+from flask import abort, jsonify, redirect, render_template, request, url_for
 from flask_restful import Resource
 from avaliacao.ext.database import db
 
-from avaliacao.models import HabilidadeAtitude, NotaAvalia, Usuario, Avaliacao, Turma
+from avaliacao.models import HabilidadeAtitude, NotaAvalia, Usuario, Avaliacao, Turma, Usuario
 
 
 class UsuariosResource(Resource):
@@ -63,3 +63,12 @@ class BuscarAvaliacaoResource(Resource):
         return jsonify(
             {"avaliacao": [avaliacao.to_dict() for avaliacao in avaliacoes]}
         )
+
+class BuscarUsuario(Resource):
+    def post(self):
+        dados = request.get_json()
+        user = Usuario.query.filter_by(username=dados['username'], password=dados['password']).first() or abort(204)
+        if user:
+            return True
+        else:
+            return False

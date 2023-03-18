@@ -7,6 +7,9 @@ from avaliacao.ext.database import db
 def index():
     return render_template("index.html")
 
+def login():
+    return render_template("login-teste.html")
+
 def inserir_notas():
     matriz = MATRIZ_AVALIACAO
     return render_template("inserir.html", matriz_avaliacao = matriz)
