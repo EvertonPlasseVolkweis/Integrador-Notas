@@ -65,9 +65,10 @@ class BuscarAvaliacaoResource(Resource):
         )
 
 class BuscarUsuario(Resource):
-    def post(self):
+    def get(self):
         dados = request.get_json()
-        user = Usuario.query.filter_by(username=dados['username'], password=dados['password']).first() or abort(204)
+        print(dados)
+        user = Usuario.query.filter_by(login=dados['usuario'], senha=dados['senha']).first() or abort(204)
         if user:
             return True
         else:
