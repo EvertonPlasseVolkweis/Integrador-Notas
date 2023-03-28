@@ -1,5 +1,6 @@
-from flask import abort, jsonify, redirect, render_template, request, url_for
-from flask_restful import Resource
+from flask import abort, jsonify, make_response, redirect, render_template, request, url_for
+from flask_jwt_extended import create_access_token
+from flask_restful import Resource, reqparse
 from avaliacao.ext.database import db
 
 from avaliacao.models import HabilidadeAtitude, NotaAvalia, Usuario, Avaliacao, Turma, Usuario
@@ -65,11 +66,20 @@ class BuscarAvaliacaoResource(Resource):
         )
 
 class BuscarUsuario(Resource):
-    def get(self):
-        dados = request.get_json()
-        print(dados)
-        user = Usuario.query.filter_by(login=dados['usuario'], senha=dados['senha']).first() or abort(204)
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('email', type=str, required=True, help='Usuário é obrigatório.')
+        self.parser.add_argument('senha', type=str, required=True, help='Senha é obrigatória.')
+
+    def post(self):
+        data = request.get_json()
+        email = data['email']
+        password = data['senha']
+        user = Usuario.query.filter_by(email=email, senha=password).first() or abort(204)
         if user:
-            return True
+            access_token = create_access_token(identity=email)
+            response = make_response({"message": "Login bem-sucedido"}, 200)
+            response.set_cookie("access_token", access_token, httponly=True)
+            return response
         else:
-            return False
+            return {'error': 'Nome de usuário ou senha incorretos!'}, 401       
