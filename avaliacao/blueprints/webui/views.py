@@ -1,15 +1,33 @@
-from flask import abort, render_template, request
+from functools import wraps
+from flask import abort, redirect, render_template, request
+from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, verify_jwt_in_request
 from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACAO_TESTE
 from avaliacao.models import Avaliacao, HabilidadeAtitude, NotaAvalia, Usuario, Turma, Sala, Disciplina, Equipe
 from avaliacao.ext.database import db
 
+def login_required(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        try:
+            print('try')
+            verify_jwt_in_request()
+            print(get_jwt_identity())
+        except Exception as e:
+            print(e)
+            return redirect("/login")
 
-def index():
+        return view_function(*args, **kwargs)
+
+    return decorated_function
+
+@login_required
+def home():
     return render_template("index.html")
 
 def login():
     return render_template("login-teste.html")
 
+@login_required
 def inserir_notas():
     matriz = MATRIZ_AVALIACAO
     return render_template("inserir.html", matriz_avaliacao = matriz)
