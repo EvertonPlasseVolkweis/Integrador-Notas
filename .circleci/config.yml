@@ -50,7 +50,7 @@ jobs:
       - checkout
       - when:
           condition:
-            equal: [ develop, << pipeline.git.branch >> ]
+            equal: [ master, << pipeline.git.branch >> ]
           steps:
             - run:
                   name: "delivery step 1"
@@ -85,14 +85,14 @@ workflows:
             branches:
               ignore:
                 - main
-                - develop
+                - master
               
       - test:
           filters:
             branches:
               ignore:
                 - main
-                - develop
+                - master
 
   delivery:
 
@@ -102,13 +102,13 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - master
 
       - test:
           filters:
             branches:
               only:
-                - develop
+                - master
 
       - delivery:
           requires:
@@ -117,7 +117,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - master
 
   deploy:
 
