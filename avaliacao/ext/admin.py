@@ -5,9 +5,10 @@ from flask_simplelogin import login_required
 from werkzeug.security import generate_password_hash
 
 from avaliacao.ext.database import db
-from avaliacao.models import Product, User
+from avaliacao.models import Usuario
 
-# Proteger o admin com login via Monkey Patch
+# Proteger o admin com login via Monkey 
+#######################################
 AdminIndexView._handle_view = login_required(AdminIndexView._handle_view)
 sqla.ModelView._handle_view = login_required(sqla.ModelView._handle_view)
 admin = Admin()
@@ -25,5 +26,4 @@ def init_app(app):
     admin.name = app.config.TITLE
     admin.template_mode = "bootstrap3"
     admin.init_app(app)
-    admin.add_view(sqla.ModelView(Product, db.session))
-    admin.add_view(UserAdmin(User, db.session))
+    admin.add_view(UserAdmin(Usuario, db.session))
