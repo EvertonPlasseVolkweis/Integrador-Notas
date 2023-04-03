@@ -4,6 +4,7 @@ from avaliacao.ext.database import db
 from avaliacao.ext.auth import create_user
 from avaliacao.models import Avaliacao, Disciplina, Equipe, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Sala, Usuario, Turma
 from avaliacao.ext.main import MATRIZ_AVALIACAO
+from datetime import datetime
 
 habilidades_atitudes = MATRIZ_AVALIACAO[1][1]
 def insert_habilidade():
@@ -51,14 +52,15 @@ def insert_perfil():
     db.session.commit()
 
 def insert_usuario():
-    usuario_profesoor = Usuario(cpf='12345678900', login='Professor', email='usuario@professor.com', senha='12345678', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=20220312, nome='Professor', ra=111111)
-    usuario_aluno = Usuario(cpf='11111111100', login='Aluno', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=20220312, nome='Aluno', ra=222222)
+    data_cadastro = datetime(2022, 3, 12)
+    usuario_profesoor = Usuario(cpf='12345678900', login='Professor', email='usuario@professor.com', senha='12345678', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=data_cadastro, nome='Professor', ra=111111)
+    usuario_aluno = Usuario(cpf='11111111100', login='Aluno', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=data_cadastro, nome='Aluno', ra=222222)
     db.session.add(usuario_profesoor)
     db.session.add(usuario_aluno)
     db.session.commit()
 
 def insert_turma():
-    nova_turma = Turma(fk_id_usuario=2, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
+    nova_turma = Turma(fk_id_usuario=1, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
     db.session.add(nova_turma)
     db.session.commit()
 

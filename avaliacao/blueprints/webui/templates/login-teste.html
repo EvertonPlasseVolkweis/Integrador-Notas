@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <style>
         html,
         body {
@@ -66,7 +68,6 @@
     <script>
         $(function () {
             $('#meu-form').on('submit', function (event) {
-                console.log("asdasd");
                 event.preventDefault(); // Previne o envio padrão do formulário
 
                 var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
@@ -82,7 +83,13 @@
                     contentType: 'application/json',
                     data: JSON.stringify(dados),
                     success: function (response) {
-                        console.log(response);
+                        if (response.message === "Login bem-sucedido") {
+                            toastr.success('Login bem-sucedido');
+                            setTimeout(function () {
+                                window.location.replace('/')
+                            }, 1000);
+                        }
+                        console.log(response.message);
                     },
                     error: function (xhr, status, error) {
                         console.log(error);

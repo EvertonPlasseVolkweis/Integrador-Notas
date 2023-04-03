@@ -1,3 +1,4 @@
+from datetime import datetime
 from avaliacao.ext.database import db
 from sqlalchemy_serializer import SerializerMixin
 
@@ -10,7 +11,7 @@ class Usuario(db.Model, SerializerMixin):
     senha = db.Column(db.String(255), nullable=False)
     fk_id_grupo = db.Column(db.Integer, db.ForeignKey('grupo.id'))
     fk_id_perfil = db.Column(db.Integer, db.ForeignKey('perfil.id'))
-    data_cadastro = db.Column(db.Integer)
+    data_cadastro = db.Column(db.DateTime, default=datetime.utcnow)
     nome = db.Column(db.String(255), nullable=False)
     ra = db.Column(db.Integer, unique=True, nullable=False)
     grupo = db.relationship('Grupo', backref='usuarios')

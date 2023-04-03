@@ -2,17 +2,19 @@
 <html>
 
 <head>
-  <title>Tela de avaliação</title>
+  <title>Tela de cadastro de usuário</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
   <script>
     function redirecionaTela() {
-      window.location.replace('/inserir-notas')
+      window.location.replace('/')
     }
     $(function () {
       $('#meu-form').on('submit', function (event) {
@@ -26,6 +28,7 @@
         $.each(dados, function () {
           dados_json[this.name] = this.value;
         });
+        console.log(dados_json);
 
         // Envia a requisição POST com o cabeçalho Content-Type: application/json
         $.ajax({
@@ -36,17 +39,18 @@
           data: JSON.stringify(dados_json),
           success: function (resultado) {
             // Processa a resposta da requisição
-            localStorage.removeItem('avaliacao-salva')
-            localStorage.setItem('avaliacao-salva', resultado);
             console.log(resultado);
+            alert('Usuário cadastrado com sucesso!');
             setTimeout(redirecionaTela, 1000);
           },
           error: function (jqXHR, textStatus, errorThrown) {
             // Trata o erro da requisição
             console.error(errorThrown);
+            alert('Ocorreu um erro ao cadastrar o usuário.');
           }
         });
       });
+      $('#cpf').mask('000.000.000-00');
     });
   </script>
 </head>
@@ -73,24 +77,47 @@
     </div>
   </nav>
   <div class="container">
-    <h2>Nova Avaliação</h2>
-    <form id="meu-form" action="/api/v1/avaliacao/cadastro" , method="post">
+    <h2>Novo Usuário</h2>
+    <form id="meu-form" action="/api/v1/cadastro-usuario" method="post">
       <div class="form-group">
-        <label for="nome">Nome da Avaliação:</label>
-        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação">
+        <label for="cpf">CPF:</label>
+        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite o CPF" required>
       </div>
       <div class="form-group">
-        <label for="descricao">Descrição:</label>
-        <textarea class="form-control" id="descricao" rows="3" placeholder="Digite uma descrição para a avaliação"
-          name="descricao"></textarea>
+        <label for="login">Login:</label>
+        <input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" required>
       </div>
       <div class="form-group">
-        <label for="usuarios">Usuários:</label>
-        <select class="form-control" id="usuarios" name="usuario">
-          {% for usuario in usuarios %}
-          <option value={{usuario.id}}>{{usuario.nome}}</option>
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Digite o email" required>
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha:</label>
+        <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha" required>
+      </div>
+      <div class="form-group">
+        <label for="grupo">Grupo:</label>
+        <select class="form-control" id="grupo" name="grupo" required>
+          {% for grupo in grupos %}
+          <option value={{grupo.id}}>{{grupo.grupo}}</option>
           {% endfor %}
         </select>
+      </div>
+      <div class="form-group">
+        <label for="perfil">Perfil:</label>
+        <select class="form-control" id="perfil" name="perfil" required>
+          {% for perfil in perfis %}
+          <option value={{perfil.id}}>{{perfil.perfil}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
+      </div>
+      <div class="form-group">
+        <label for="ra">RA:</label>
+        <input type="text" class="form-control" id="ra" name="ra" placeholder="Digite o RA" required>
       </div>
       <button type="submit" class="btn btn-primary">Salvar</button>
     </form>

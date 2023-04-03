@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import abort, jsonify, make_response, redirect, render_template, request, url_for
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
@@ -22,7 +23,7 @@ class CadastroAvaliacaoResource(Resource):
         dados = request.get_json()
         print(dados)
         novaAvaliacao = Avaliacao(
-            titulo=dados['avaliacao'], descricao=dados['descricao'], data_inicio=0, data_fim=0, fk_id_usuario=1)
+            titulo=dados['avaliacao'], descricao=dados['descricao'], data_inicio=0, data_fim=0, fk_id_usuario=dados['usuario'])
         db.session.add(novaAvaliacao)
         db.session.commit()
         avaliacaoSaved = Avaliacao.query.filter_by(
@@ -82,4 +83,23 @@ class BuscarUsuario(Resource):
             response.set_cookie("access_token", access_token, httponly=True)
             return response
         else:
-            return {'error': 'Nome de usuário ou senha incorretos!'}, 401       
+            return {'error': 'Nome de usuário ou senha incorretos!'}, 401
+
+
+class CadastroUsuario(Resource):
+    def post(self):
+        dados = request.get_json()
+        print(dados)
+        cpf = dados['cpf']
+        login = dados['login']
+        email = dados['email']
+        senha = dados['senha']
+        fk_id_grupo = dados['grupo']
+        fk_id_perfil = dados['perfil']
+        nome = dados['nome']
+        ra = dados['ra']
+        usuario = Usuario(cpf=cpf, login=login, email=email, senha=senha, fk_id_grupo=fk_id_grupo, fk_id_perfil=fk_id_perfil, data_cadastro=datetime.utcnow(), nome=nome, ra=ra)
+        db.session.add(usuario)
+        db.session.commit()
+        response = make_response({"message": "Usuario salvo"}, 200)
+        return response
