@@ -2,7 +2,7 @@ from functools import wraps
 from flask import abort, redirect, render_template, request
 from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, verify_jwt_in_request
 from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACAO_TESTE
-from avaliacao.models import Avaliacao, HabilidadeAtitude, NotaAvalia, Usuario, Turma, Sala, Disciplina, Equipe
+from avaliacao.models import Avaliacao, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Usuario, Turma, Sala, Disciplina, Equipe
 from avaliacao.ext.database import db
 
 def login_required(view_function):
@@ -27,6 +27,11 @@ def home():
 def login():
     return render_template("login-teste.html")
 
+def cadastro_usuario():
+    grupos = Grupo.query.all()
+    perfis = Perfil.query.all()
+    return render_template("cadastro-usuario.html", grupos=grupos, perfis=perfis)
+
 @login_required
 def inserir_notas():
     matriz = MATRIZ_AVALIACAO
@@ -38,6 +43,7 @@ def cadastro_avaliacao():
 
 def tabela_avaliacao_turma():
     turmas = Turma.query.all()
+    print(turmas)
     lista = []
     for turma in turmas:
         usuario = Usuario.query.filter_by(id=turma.fk_id_usuario).first()
@@ -45,8 +51,8 @@ def tabela_avaliacao_turma():
         disciplina = Disciplina.query.filter_by(id=turma.fk_id_disciplina).first()
         equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
         avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
-        lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo, "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
-    
+        if usuario and sala and disciplina and equipe and avaliacao:
+            lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo, "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
     return render_template("tabela-avaliacao-turma.html", data=lista)
 
 def visualiza_media():
