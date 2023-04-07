@@ -44,6 +44,7 @@ class Avaliacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(255), nullable=False, unique=True)
     descricao = db.Column(db.String(255), nullable=False)
+    tipo_avaliacao = db.Column(db.String(255), nullable=False)
     data_inicio = db.Column(db.Integer, nullable=False)
     data_fim = db.Column(db.Integer, nullable=False)
     fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'))

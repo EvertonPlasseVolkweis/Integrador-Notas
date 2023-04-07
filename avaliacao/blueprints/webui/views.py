@@ -5,6 +5,7 @@ from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACA
 from avaliacao.models import Avaliacao, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Usuario, Turma, Sala, Disciplina, Equipe
 from avaliacao.ext.database import db
 
+
 def login_required(view_function):
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
@@ -20,26 +21,39 @@ def login_required(view_function):
 
     return decorated_function
 
-@login_required
+
 def home():
     return render_template("index.html")
 
+
 def login():
     return render_template("login-teste.html")
+
 
 def cadastro_usuario():
     grupos = Grupo.query.all()
     perfis = Perfil.query.all()
     return render_template("cadastro-usuario.html", grupos=grupos, perfis=perfis)
 
+
 @login_required
 def inserir_notas():
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     matriz = MATRIZ_AVALIACAO
-    return render_template("inserir.html", matriz_avaliacao = matriz)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo)
+
 
 def cadastro_avaliacao():
     usuario = Usuario.query.all()
-    return render_template("cadastro-avaliacao.html", usuarios=usuario)
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo)
+
 
 def tabela_avaliacao_turma():
     turmas = Turma.query.all()
@@ -48,19 +62,22 @@ def tabela_avaliacao_turma():
     for turma in turmas:
         usuario = Usuario.query.filter_by(id=turma.fk_id_usuario).first()
         sala = Sala.query.filter_by(id=turma.fk_id_sala).first()
-        disciplina = Disciplina.query.filter_by(id=turma.fk_id_disciplina).first()
+        disciplina = Disciplina.query.filter_by(
+            id=turma.fk_id_disciplina).first()
         equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
         avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
         if usuario and sala and disciplina and equipe and avaliacao:
-            lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo, "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
+            lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
+                         "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
     return render_template("tabela-avaliacao-turma.html", data=lista)
+
 
 def visualiza_media():
     todas_notas = []
     avaliacao_id = 1  # a fk_id_avaliacao desejada
-    notas_avaliacao = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao_id).all()
+    notas_avaliacao = NotaAvalia.query.filter_by(
+        fk_id_avaliacao=avaliacao_id).all()
     notas = [int(nota.valor) for nota in notas_avaliacao]
-
 
     sub_listas = []
     sub_lista = []
@@ -73,7 +90,7 @@ def visualiza_media():
         sub_lista.append(elemento)
         contagem += 1
     sub_listas.append(sub_lista)
-    
+
     for notinha in sub_listas:
         newNotas = []
         for categoria in MATRIZ_AVALIACAO:
@@ -95,5 +112,3 @@ def visualiza_media():
     media_final = soma_total / n_total
 
     return render_template("inserido.html", media_final=media_final)
-
-

@@ -44,7 +44,7 @@
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         // Trata o erro da requisição
-                        console.error(errorThrown);
+                        console.error('asdasd', errorThrown);
                     }
                 });
             });
@@ -75,23 +75,25 @@
     </nav>
     <div class="container">
         <h1>Inserir Notas</h1>
-        <form id="meu-form" action="/api/v1/nota-avalia/cadastro", method="post">
-            {% for categoria in matriz_avaliacao %}
-            <h2>{{ categoria[0] }}</h2>
+        <form id="meu-form" action="/api/v1/nota-avalia/cadastro" method="post">
+            {% for categoria, itens, peso_categoria in matriz_avaliacao %}
+            {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" %}
+            <h2>{{ categoria }}</h2>
             <div class="form-group">
-                {% for criterio, peso in categoria[1].items() %}
-                <label for="{{ categoria[0] }}-{{ criterio }}">{{ criterio }}</label>
-                <input type="number" step="0.01" class="form-control" id="{{ categoria[0] }}-{{ criterio }}"
-                    name="{{ categoria[0] }}-{{ criterio }}" required>
+                {% for criterio, peso in itens.items() %}
+                <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                <input type="number" step="0.01" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                    name="{{ categoria }}-{{ criterio }}" required>
                 {% endfor %}
             </div>
-            {% if loop.index == 2 %}
-            <h3>Avaliação 360º</h3>
+            {% endif %}
+            {% if categoria != "Conhecimentos" %}
+            <h2>{{ categoria }}</h2>
             <div class="form-group">
-                {% for avaliador, peso in categoria[3].items() %}
-                <label for="{{ categoria[0] }}-{{ avaliador }}">{{ avaliador }}</label>
-                <input type="number" step="0.01" class="form-control" id="{{ categoria[0] }}-{{ avaliador }}"
-                    name="{{ categoria[0] }}-{{ avaliador }}" required>
+                {% for criterio, peso in itens.items() %}
+                <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                <input type="number" step="0.01" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                    name="{{ categoria }}-{{ criterio }}" required>
                 {% endfor %}
             </div>
             {% endif %}
@@ -109,5 +111,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 </body>
+
+
 
 </html>

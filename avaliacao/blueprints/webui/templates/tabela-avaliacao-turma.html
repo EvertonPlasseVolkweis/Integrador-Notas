@@ -21,6 +21,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Tipo Avaliação</th>
                     <th>Nome Aluno</th>
                     <th>Sala</th>
                     <th>Disciplina</th>
@@ -32,6 +33,7 @@
             <tbody>
                 {% for item in data %}
                 <tr>
+                    <td>{{ item.tipo_avaliacao }}</td>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.sala }}</td>
                     <td>{{ item.disciplina }}</td>

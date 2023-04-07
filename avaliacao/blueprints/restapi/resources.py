@@ -23,7 +23,7 @@ class CadastroAvaliacaoResource(Resource):
         dados = request.get_json()
         print(dados)
         novaAvaliacao = Avaliacao(
-            titulo=dados['avaliacao'], descricao=dados['descricao'], data_inicio=0, data_fim=0, fk_id_usuario=dados['usuario'])
+            titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0, fk_id_usuario=dados['usuario'])
         db.session.add(novaAvaliacao)
         db.session.commit()
         avaliacaoSaved = Avaliacao.query.filter_by(
@@ -78,7 +78,7 @@ class BuscarUsuario(Resource):
         password = data['senha']
         user = Usuario.query.filter_by(email=email, senha=password).first() or abort(204)
         if user:
-            access_token = create_access_token(identity=email)
+            access_token = create_access_token(identity=user.id)
             response = make_response({"message": "Login bem-sucedido"}, 200)
             response.set_cookie("access_token", access_token, httponly=True)
             return response
