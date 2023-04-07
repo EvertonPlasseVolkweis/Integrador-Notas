@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask, redirect, url_for
 from flask_jwt_extended import JWTManager
 from avaliacao.ext import configuration
@@ -10,8 +11,9 @@ def minimal_app(**config):
     configuration.init_app(app, **config)
     # Substitua `app` pelo seu objeto Flask
     app.config['SECRET_KEY'] = 'chaves'
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-    app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'  
+    app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
     jwt = JWTManager(app)
     return app
 

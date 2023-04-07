@@ -74,7 +74,17 @@
   </nav>
   <div class="container">
     <h2>Nova Avaliação</h2>
-    <form id="meu-form" action="/api/v1/avaliacao/cadastro" , method="post">
+    <form id="meu-form" action="/api/v1/avaliacao/cadastro" method="post">
+      <div class="form-group">
+        <label for="descricao">Tipo de Avaliação:</label>
+        <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao">
+          {% if grupo.grupo == "Professores" %}
+          <option value="aluno">Avaliação Aluno</option>
+          {% endif %}
+          <option value="colega">Avaliação Colega de Equipe</option>
+          <option value="auto">Auto Avaliação</option>
+        </select>
+      </div>
       <div class="form-group">
         <label for="nome">Nome da Avaliação:</label>
         <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação">
@@ -88,13 +98,14 @@
         <label for="usuarios">Usuários:</label>
         <select class="form-control" id="usuarios" name="usuario">
           {% for usuario in usuarios %}
-          <option value={{usuario.id}}>{{usuario.nome}}</option>
+          <option value="{{usuario.id}}">{{usuario.nome}}</option>
           {% endfor %}
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
   </div>
+  
 </body>
 
 </html>
