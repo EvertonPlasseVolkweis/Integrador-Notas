@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +14,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function redirecionaTela() {
-            window.location.replace('/inserir-notas')
+            window.location.replace('/')
         }
         $(function () {
             $('#meu-form').on('submit', function (event) {
@@ -26,10 +25,17 @@
 
                 // Converte os dados para um objeto JSON
                 var dados_json = {};
+                const avaliacaoObj = dados.find((obj) => obj.name === "avaliacao");
+                console.log(avaliacaoObj);
+                const newArray = dados.filter((obj) => obj.name !== "avaliacao");
+                dados = newArray;
                 for (var i = 0; i < dados.length; i++) {
                     var partes = dados[i].name.split("-"); // Divide o nome em duas partes separadas por hífen
                     dados_json[partes[1].trim()] = dados[i].value; // Atualiza o nome do objeto JSON com o texto após o hífen
                 }
+                // Adiciona o avaliacaoObj ao objeto dados_json
+                dados_json[avaliacaoObj.name] = avaliacaoObj.value;
+
                 console.log(dados_json);
                 // Envia a requisição POST com o cabeçalho Content-Type: application/json
                 $.ajax({
@@ -39,11 +45,9 @@
                     contentType: 'application/json',
                     data: JSON.stringify(dados_json),
                     success: function (resultado) {
-                        // Processa a resposta da requisição
                         setTimeout(redirecionaTela, 1000);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        // Trata o erro da requisição
                         console.error('asdasd', errorThrown);
                     }
                 });
@@ -76,13 +80,19 @@
     <div class="container">
         <h1>Inserir Notas</h1>
         <form id="meu-form" action="/api/v1/nota-avalia/cadastro" method="post">
+            <select class="form-control" id="avaliacao" name="avaliacao">
+                <option value="" disabled selected>Selecione uma Avaliação</option>
+                {% for avaliacao in avaliacao %}
+                <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
+                {% endfor %}
+            </select>
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
             <div class="form-group">
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                <input type="number" step="0.01" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}" required>
                 {% endfor %}
             </div>
@@ -92,7 +102,7 @@
             <div class="form-group">
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                <input type="number" step="0.01" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}" required>
                 {% endfor %}
             </div>
@@ -110,8 +120,24 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    var value = parseInt(input.value);
+                    if (isNaN(value)) {
+                        input.value = '';
+                    } else if (value > 10) {
+                        input.value = 10;
+                    } else if (value < 0) {
+                        input.value = 0;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
-
 
 
 </html>

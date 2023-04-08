@@ -78,6 +78,7 @@
       <div class="form-group">
         <label for="descricao">Tipo de Avaliação:</label>
         <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao">
+          <option value="" disabled selected>Selecione o Tipo de Avaliação</option>
           {% if grupo.grupo == "Professores" %}
           <option value="aluno">Avaliação Aluno</option>
           {% endif %}
@@ -97,13 +98,14 @@
       <div class="form-group">
         <label for="usuarios">Usuários:</label>
         <select class="form-control" id="usuarios" name="usuario">
+          <option value="" disabled selected>Selecione um Usuário</option>
           {% for usuario in usuarios %}
           <option value="{{usuario.id}}">{{usuario.nome}}</option>
           {% endfor %}
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Salvar</button>
-    </form>
+    </form>    
   </div>
   
 </body>

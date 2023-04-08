@@ -47,6 +47,7 @@ class Avaliacao(db.Model):
     tipo_avaliacao = db.Column(db.String(255), nullable=False)
     data_inicio = db.Column(db.Integer, nullable=False)
     data_fim = db.Column(db.Integer, nullable=False)
+    tem_nota = db.Column(db.Boolean, nullable=False, default=False)
     fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     usuario = db.relationship('Usuario', backref='avaliacoes')
 

@@ -22,18 +22,23 @@ def login_required(view_function):
     return decorated_function
 
 
-def home():
-    return render_template("index.html")
-
-
 def login():
     return render_template("login-teste.html")
 
 
+@login_required
+def home():
+    return render_template("index.html")
+
+
+@login_required
 def cadastro_usuario():
     grupos = Grupo.query.all()
     perfis = Perfil.query.all()
-    return render_template("cadastro-usuario.html", grupos=grupos, perfis=perfis)
+    equipe = Equipe.query.all()
+    sala = Sala.query.all()
+    disciplina = Disciplina.query.all()
+    return render_template("cadastro-usuario.html", grupos=grupos, perfis=perfis, equipe=equipe, sala=sala, disciplina=disciplina)
 
 
 @login_required
@@ -42,10 +47,12 @@ def inserir_notas():
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    avaliacao = Avaliacao.query.filter_by(tem_nota=False).all()
     matriz = MATRIZ_AVALIACAO
-    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, avaliacao=avaliacao)
 
 
+@login_required
 def cadastro_avaliacao():
     usuario = Usuario.query.all()
     verify_jwt_in_request()
@@ -55,6 +62,7 @@ def cadastro_avaliacao():
     return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo)
 
 
+@login_required
 def tabela_avaliacao_turma():
     turmas = Turma.query.all()
     print(turmas)
@@ -67,11 +75,12 @@ def tabela_avaliacao_turma():
         equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
         avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
         if usuario and sala and disciplina and equipe and avaliacao:
-            lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
+            lista.append({"tipo_avaliacao": avaliacao.tipo_avaliacao, "nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
                          "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
     return render_template("tabela-avaliacao-turma.html", data=lista)
 
 
+@login_required
 def visualiza_media():
     todas_notas = []
     avaliacao_id = 1  # a fk_id_avaliacao desejada
