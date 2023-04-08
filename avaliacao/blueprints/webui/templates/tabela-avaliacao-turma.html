@@ -39,7 +39,10 @@
                     <td>{{ item.disciplina }}</td>
                     <td>{{ item.equipe }}</td>
                     <td>{{ item.avaliacao }}</td>
-                    <td><button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Visualizar</button></td>
+                    <td>
+                        <button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Visualizar</button>
+                        <button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Boletim</button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

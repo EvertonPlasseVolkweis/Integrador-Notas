@@ -3,6 +3,7 @@ from flask import abort, jsonify, make_response, redirect, render_template, requ
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
 from avaliacao.ext.database import db
+from sqlalchemy.orm.exc import NoResultFound
 
 from avaliacao.models import HabilidadeAtitude, NotaAvalia, Usuario, Avaliacao, Turma, Usuario
 
@@ -42,6 +43,7 @@ class NotaAvaliaResource(Resource):
     def post(self):
         dados = request.get_json()
         print(dados)
+        idAvaliacao = dados['avaliacao']
 
         # Iterar sobre os dados recebidos e criar um objeto NotaAvalia para cada habilidade/atitude
         for nome_habilidade, valor in dados.items():
@@ -49,9 +51,14 @@ class NotaAvaliaResource(Resource):
                 titulo=nome_habilidade).first()
             if habilidade_atitude is not None:
                 nota_avalia = NotaAvalia(
-                    fk_id_avaliacao=1, fk_id_habilidade_atitude=habilidade_atitude.id, comentario='', valor=valor)
+                    fk_id_avaliacao=idAvaliacao, fk_id_habilidade_atitude=habilidade_atitude.id, comentario='', valor=valor)
                 db.session.add(nota_avalia)
-
+        avaliacao = Avaliacao.query.filter_by(id=idAvaliacao).first() or abort(
+            404, "Avaliação não encontrada"
+        )
+        avaliacao.tem_nota = True
+        db.session.add(avaliacao)
+        db.session.commit()
         # Commitar as mudanças no banco de dados
         db.session.commit()
 
@@ -66,17 +73,21 @@ class BuscarAvaliacaoResource(Resource):
             {"avaliacao": [avaliacao.to_dict() for avaliacao in avaliacoes]}
         )
 
+
 class BuscarUsuario(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('email', type=str, required=True, help='Usuário é obrigatório.')
-        self.parser.add_argument('senha', type=str, required=True, help='Senha é obrigatória.')
+        self.parser.add_argument(
+            'email', type=str, required=True, help='Usuário é obrigatório.')
+        self.parser.add_argument(
+            'senha', type=str, required=True, help='Senha é obrigatória.')
 
     def post(self):
         data = request.get_json()
         email = data['email']
         password = data['senha']
-        user = Usuario.query.filter_by(email=email, senha=password).first() or abort(204)
+        user = Usuario.query.filter_by(
+            email=email, senha=password).first() or abort(204)
         if user:
             access_token = create_access_token(identity=user.id)
             response = make_response({"message": "Login bem-sucedido"}, 200)
@@ -98,8 +109,13 @@ class CadastroUsuario(Resource):
         fk_id_perfil = dados['perfil']
         nome = dados['nome']
         ra = dados['ra']
-        usuario = Usuario(cpf=cpf, login=login, email=email, senha=senha, fk_id_grupo=fk_id_grupo, fk_id_perfil=fk_id_perfil, data_cadastro=datetime.utcnow(), nome=nome, ra=ra)
+        usuario = Usuario(cpf=cpf, login=login, email=email, senha=senha, fk_id_grupo=fk_id_grupo,
+                          fk_id_perfil=fk_id_perfil, data_cadastro=datetime.utcnow(), nome=nome, ra=ra)
         db.session.add(usuario)
+        db.session.commit()
+        nova_turma = Turma(fk_id_usuario=usuario.id,
+                           fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina'], fk_id_equipe=dados['equipe'], fk_id_avaliacao=0)
+        db.session.add(nova_turma)
         db.session.commit()
         response = make_response({"message": "Usuario salvo"}, 200)
         return response
