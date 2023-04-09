@@ -79,13 +79,19 @@
     </nav>
     <div class="container">
         <h1>Inserir Notas</h1>
+        {% set notas_dict = {} %}
+        {% for nota in notaAvalia %}
+            {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
+        {% endfor %}
         <form id="meu-form" action="/api/v1/nota-avalia/cadastro" method="post">
+            {% if visualizando != True %}
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
                 {% for avaliacao in avaliacao %}
-                <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
+                    <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
                 {% endfor %}
             </select>
+            {% endif %}
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
@@ -93,7 +99,7 @@
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}" required>
+                    name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required>            
                 {% endfor %}
             </div>
             {% endif %}
@@ -103,7 +109,7 @@
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}" required>
+                    name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required>
                 {% endfor %}
             </div>
             {% endif %}
