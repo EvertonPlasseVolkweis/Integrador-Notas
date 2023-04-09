@@ -76,7 +76,7 @@ def tabela_avaliacao_turma():
         avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
         if usuario and sala and disciplina and equipe and avaliacao:
             lista.append({"tipo_avaliacao": avaliacao.tipo_avaliacao, "nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
-                         "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
+                         "equipe": equipe.apelido, "avaliacao": avaliacao.titulo, "id": avaliacao.id})
     return render_template("tabela-avaliacao-turma.html", data=lista)
 
 
@@ -121,3 +121,17 @@ def visualiza_media():
     media_final = soma_total / n_total
 
     return render_template("inserido.html", media_final=media_final)
+
+
+@login_required
+def visualiza_avaliacao(item_id):
+    print(item_id)
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    matriz = MATRIZ_AVALIACAO
+    avaliacao = Avaliacao.query.filter_by(id=item_id).first()
+    notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
+    print(notaAvalia)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=True)
