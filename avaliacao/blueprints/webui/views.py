@@ -4,17 +4,17 @@ from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, ver
 from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACAO_TESTE
 from avaliacao.models import Avaliacao, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Usuario, Turma, Sala, Disciplina, Equipe
 from avaliacao.ext.database import db
+from sqlalchemy import text
+import json
+
 
 
 def login_required(view_function):
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
         try:
-            print('try')
             verify_jwt_in_request()
-            print(get_jwt_identity())
         except Exception as e:
-            print(e)
             return redirect("/login")
 
         return view_function(*args, **kwargs)
@@ -135,3 +135,43 @@ def visualiza_avaliacao(item_id):
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
     print(notaAvalia)
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=True)
+
+@login_required
+def visualiza_boletim(item_nome):
+    usuario = Usuario.query.filter_by(nome=item_nome).first()
+    consulta = text("select av.titulo, av.descricao, av.tipo_avaliacao, JSON_GROUP_ARRAY(json_object('titulo', ha.titulo, 'nota', na.valor, 'fator_peso', ha.fator_peso)) AS notas from avaliacao av left join nota_avalia na on na.fk_id_avaliacao = av.id  left join habilidade_atitude ha on ha.id = na.fk_id_habilidade_atitude left join usuario us on us.id = av.fk_id_usuario left join grupo g on g.id = us.fk_id_grupo where av.fk_id_usuario = :idUsuario group by av.id")
+    parametros = {'idUsuario': usuario.id} 
+    execute = db.session.execute(consulta, parametros)
+    result = execute.fetchall()
+
+    array = []
+    
+    # Cria um dicionário para armazenar as médias de cada avaliação
+    medias = {}
+
+    # Armazena a soma total das notas de todas as avaliações
+    soma_total = 0
+
+    # Percorre cada avaliação na lista de dados
+    for avaliacao in result:
+        # Converte a string em um dicionário
+        aval_dict = json.loads(avaliacao[3])
+        
+        # Calcula a média da avaliação
+        media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]) / sum([a['fator_peso'] for a in aval_dict])
+        
+        # Armazena a média no dicionário medias
+        medias[avaliacao[0]] = media
+        
+        # Arredonda a média para duas casas decimais
+        media_arredondada = round(media, 2)
+
+        array.append({"titulo": avaliacao[0], "descricao": avaliacao[1], "tipo": avaliacao[2], "media": media_arredondada})
+        
+        # Adiciona a nota total ao somatório
+        soma_total += sum([a['nota'] for a in aval_dict])
+    
+    soma_total = round(soma_total / len(result), 2)
+
+
+    return render_template("boletim.html", data=array, media_total=soma_total)
