@@ -17,10 +17,6 @@
 <body>
     {% block scripts %}
     <script>
-        function visualizarMedia(button) {
-            var itemId = button.getAttribute('data-id');
-            window.location.replace('/visualiza-avaliacao/' + itemId);
-        }
     </script>
     {% endblock %}
 	{% block content %}
@@ -49,7 +45,7 @@
                     <td>{{ item.avaliacao }}</td>
                     <td>
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}" onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
-                        <button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Boletim</button>
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}" onclick="window.location.replace('/boletim/' + this.getAttribute('data-id'))">Boletim</button>
                     </td>
                 </tr>
                 {% endfor %}
