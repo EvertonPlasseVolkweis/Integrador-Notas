@@ -9,3 +9,5 @@ pip install -r requirements_dev.txt
 pip install -r requirements_test.txt
 
 Rodar o comando flask run para inicia o projeto(necessario estar na pasta avaliação)
+
+Entrar com login alemao@alemao e senha 123123
