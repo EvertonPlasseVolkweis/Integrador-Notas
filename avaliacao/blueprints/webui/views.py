@@ -64,20 +64,24 @@ def cadastro_avaliacao():
 
 @login_required
 def tabela_avaliacao_turma():
-    turmas = Turma.query.all()
-    print(turmas)
-    lista = []
-    for turma in turmas:
-        usuario = Usuario.query.filter_by(id=turma.fk_id_usuario).first()
-        sala = Sala.query.filter_by(id=turma.fk_id_sala).first()
-        disciplina = Disciplina.query.filter_by(
-            id=turma.fk_id_disciplina).first()
-        equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
-        avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
-        if usuario and sala and disciplina and equipe and avaliacao:
-            lista.append({"tipo_avaliacao": avaliacao.tipo_avaliacao, "nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
-                         "equipe": equipe.apelido, "avaliacao": avaliacao.titulo, "id": avaliacao.id})
-    return render_template("tabela-avaliacao-turma.html", data=lista)
+    # turmas = Turma.query.all()
+    # print(turmas)
+    # lista = []
+    # for turma in turmas:
+    #     usuario = Usuario.query.filter_by(id=turma.fk_id_usuario).first()
+    #     sala = Sala.query.filter_by(id=turma.fk_id_sala).first()
+    #     disciplina = Disciplina.query.filter_by(
+    #         id=turma.fk_id_disciplina).first()
+    #     equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
+    #     avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
+    #     if usuario and sala and disciplina and equipe and avaliacao:
+    #         lista.append({"tipo_avaliacao": avaliacao.tipo_avaliacao, "nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo,
+    #                      "equipe": equipe.apelido, "avaliacao": avaliacao.titulo, "id": avaliacao.id})
+    consulta = text("select a.titulo, a.tipo_avaliacao, u.nome, s.numero, d.titulo, e.apelido, a.id from avaliacao a left join turma t on t.fk_id_usuario in (a.fk_id_usuario) left join usuario u on u.id in (a.fk_id_usuario) left join sala s on s.id in (t.fk_id_sala) left join disciplina d on d.id in (t.fk_id_disciplina) left join equipe e on e.id in (t.fk_id_equipe)")
+    execute = db.session.execute(consulta)
+    result = execute.fetchall()
+    print(result)
+    return render_template("tabela-avaliacao-turma.html", data=result)
 
 
 @login_required
@@ -169,7 +173,7 @@ def visualiza_boletim(item_nome):
         array.append({"titulo": avaliacao[0], "descricao": avaliacao[1], "tipo": avaliacao[2], "media": media_arredondada})
         
         # Adiciona a nota total ao somatório
-        soma_total += sum([a['nota'] for a in aval_dict])
+        soma_total += media
     
     soma_total = round(soma_total / len(result), 2)
 

@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from datetime import datetime
 from flask import abort, jsonify, make_response, redirect, render_template, request, url_for
 from flask_jwt_extended import create_access_token
@@ -68,9 +69,12 @@ class NotaAvaliaResource(Resource):
 
 class BuscarAvaliacaoResource(Resource):
     def get(self):
-        avaliacoes = Avaliacao.query.all() or abort(204)
+        consulta = text("select a.titulo, a.tipo_avaliacao, u.nome, s.numero, d.titulo, e.apelido from avaliacao a left join turma t on t.fk_id_usuario in (a.fk_id_usuario) left join usuario u on u.id in (a.fk_id_usuario) left join sala s on s.id in (t.fk_id_sala) left join disciplina d on d.id in (t.fk_id_disciplina) left join equipe e on e.id in (t.fk_id_equipe)")
+        execute = db.session.execute(consulta)
+        result = execute.fetchall()
+        print(result)
         return jsonify(
-            {"avaliacao": [avaliacao.to_dict() for avaliacao in avaliacoes]}
+            {"avaliacao": [result.to_dict() for result in result]}
         )
 
 
@@ -119,3 +123,11 @@ class CadastroUsuario(Resource):
         db.session.commit()
         response = make_response({"message": "Usuario salvo"}, 200)
         return response
+    
+
+class LogoutResource(Resource):
+    def post(self):
+        response = make_response(redirect('/login'))
+        response.delete_cookie('access_token')
+        return response
+
