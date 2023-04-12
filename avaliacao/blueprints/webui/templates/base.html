@@ -7,6 +7,12 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function logout() {
+            document.cookie.split(";").forEach(function (c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+            window.location.replace('/login')
+        }
+    </script>
 </head>
 
 <body>
@@ -32,6 +38,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/cadastro-usuario">Cadastrar Usuario</a>
+                </li>
+                <li style="margin-left: 300px;" class="nav-item">
+                    <a class="nav-link" href="#" onclick="logout()">Logout</a>
                 </li>
             </ul>
         </div>

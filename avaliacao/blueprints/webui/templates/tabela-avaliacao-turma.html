@@ -37,12 +37,12 @@
             <tbody>
                 {% for item in data %}
                 <tr>
+                    <td>{{ item.titulo }}</td>
                     <td>{{ item.tipo_avaliacao }}</td>
                     <td>{{ item.nome }}</td>
-                    <td>{{ item.sala }}</td>
-                    <td>{{ item.disciplina }}</td>
-                    <td>{{ item.equipe }}</td>
-                    <td>{{ item.avaliacao }}</td>
+                    <td>{{ item.numero }}</td>
+                    <td>{{ item.titulo }}</td>
+                    <td>{{ item.apelido }}</td>
                     <td>
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}" onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}" onclick="window.location.replace('/boletim/' + this.getAttribute('data-id'))">Boletim</button>

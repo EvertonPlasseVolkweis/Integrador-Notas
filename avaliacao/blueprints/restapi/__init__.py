@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
-from .resources import BuscarUsuario, CadastroUsuario, NotaAvaliaResource, UsuariosResource, CadastroAvaliacaoResource
+from .resources import BuscarUsuario, CadastroUsuario, LogoutResource, NotaAvaliaResource, UsuariosResource, CadastroAvaliacaoResource
 
 
 ## inicialização para rotas de controladora chamando classes resources
@@ -16,4 +16,5 @@ def init_app(app):
     api.add_resource(NotaAvaliaResource, "/nota-avalia/cadastro")
     api.add_resource(BuscarUsuario, "/busca-usuario")
     api.add_resource(CadastroUsuario, "/cadastro-usuario")
+    api.add_resource(LogoutResource, "/logout")
     app.register_blueprint(bp)
