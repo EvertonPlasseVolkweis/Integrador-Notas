@@ -11,9 +11,6 @@ Flask-Migrate==4.0.4
 Mako==1.2.4
 alembic==1.9.4
 dash==2.8.1
-<<<<<<< HEAD
-=======
 PyJWT==2.6.0
 flask-jwt-extended==4.4.4
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 dash_bootstrap_components

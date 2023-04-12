@@ -1,42 +1,3 @@
-<<<<<<< HEAD
-from flask import abort, render_template, request
-from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACAO_TESTE
-from avaliacao.models import Avaliacao, HabilidadeAtitude, NotaAvalia, Usuario, Turma, Sala, Disciplina, Equipe
-from avaliacao.ext.database import db
-
-
-def index():
-    return render_template("index.html")
-
-def inserir_notas():
-    matriz = MATRIZ_AVALIACAO
-    return render_template("inserir.html", matriz_avaliacao = matriz)
-
-def cadastro_avaliacao():
-    usuario = Usuario.query.all()
-    return render_template("cadastro-avaliacao.html", usuarios=usuario)
-
-def tabela_avaliacao_turma():
-    turmas = Turma.query.all()
-    lista = []
-    for turma in turmas:
-        usuario = Usuario.query.filter_by(id=turma.fk_id_usuario).first()
-        sala = Sala.query.filter_by(id=turma.fk_id_sala).first()
-        disciplina = Disciplina.query.filter_by(id=turma.fk_id_disciplina).first()
-        equipe = Equipe.query.filter_by(id=turma.fk_id_equipe).first()
-        avaliacao = Avaliacao.query.filter_by(id=turma.fk_id_avaliacao).first()
-        lista.append({"nome": usuario.nome, "sala": sala.numero, "disciplina": disciplina.titulo, "equipe": equipe.apelido, "avaliacao": avaliacao.titulo})
-    
-    return render_template("tabela-avaliacao-turma.html", data=lista)
-
-def visualiza_media():
-    todas_notas = []
-    avaliacao_id = 1  # a fk_id_avaliacao desejada
-    notas_avaliacao = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao_id).all()
-    notas = [int(nota.valor) for nota in notas_avaliacao]
-
-
-=======
 from functools import wraps
 from flask import abort, redirect, render_template, request
 from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, verify_jwt_in_request
@@ -131,7 +92,6 @@ def visualiza_media():
         fk_id_avaliacao=avaliacao_id).all()
     notas = [int(nota.valor) for nota in notas_avaliacao]
 
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     sub_listas = []
     sub_lista = []
     contagem = 0
@@ -143,11 +103,6 @@ def visualiza_media():
         sub_lista.append(elemento)
         contagem += 1
     sub_listas.append(sub_lista)
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     for notinha in sub_listas:
         newNotas = []
         for categoria in MATRIZ_AVALIACAO:

@@ -26,16 +26,6 @@ MATRIZ_AVALIACAO_TESTE = {
     },
 }
 
-<<<<<<< HEAD
-    # 'Avaliação 360º': {
-    #     'porcentagem': 30,
-    #     'Autoavaliação': 3,
-    #     'Avaliação da equipe': 3,
-    #     'Avaliação do professor': 24
-    # }
-
-# Define a matriz de avaliação como constante
-=======
 
 # # Define a matriz de avaliação como constante
 # MATRIZ_AVALIACAO = [
@@ -51,7 +41,6 @@ MATRIZ_AVALIACAO_TESTE = {
 #     ]
 # ]
 
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 MATRIZ_AVALIACAO = [
     # Conhecimentos
     ["Conhecimentos", {"Avaliação objetiva": 0.15, "Unidades de Aprendizagem (Uas)": 0.1, "Avaliação dissertativa": 0.3, "Entrega": 0.15}, 0.7],

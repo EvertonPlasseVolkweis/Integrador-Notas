@@ -15,11 +15,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function redirecionaTela() {
-<<<<<<< HEAD
-            window.location.replace('/inserir-notas')
-=======
             window.location.replace('/')
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
         }
         $(function () {
             $('#meu-form').on('submit', function (event) {
@@ -30,23 +26,17 @@
 
                 // Converte os dados para um objeto JSON
                 var dados_json = {};
-<<<<<<< HEAD
-=======
                 const avaliacaoObj = dados.find((obj) => obj.name === "avaliacao");
                 console.log(avaliacaoObj);
                 const newArray = dados.filter((obj) => obj.name !== "avaliacao");
                 dados = newArray;
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
                 for (var i = 0; i < dados.length; i++) {
                     var partes = dados[i].name.split("-"); // Divide o nome em duas partes separadas por hífen
                     dados_json[partes[1].trim()] = dados[i].value; // Atualiza o nome do objeto JSON com o texto após o hífen
                 }
-<<<<<<< HEAD
-=======
                 // Adiciona o avaliacaoObj ao objeto dados_json
                 dados_json[avaliacaoObj.name] = avaliacaoObj.value;
 
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
                 console.log(dados_json);
                 // Envia a requisição POST com o cabeçalho Content-Type: application/json
                 $.ajax({
@@ -56,19 +46,10 @@
                     contentType: 'application/json',
                     data: JSON.stringify(dados_json),
                     success: function (resultado) {
-<<<<<<< HEAD
-                        // Processa a resposta da requisição
-                        setTimeout(redirecionaTela, 1000);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        // Trata o erro da requisição
-                        console.error(errorThrown);
-=======
                         setTimeout(redirecionaTela, 1000);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error('asdasd', errorThrown);
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
                     }
                 });
             });
@@ -99,11 +80,6 @@
     </nav>
     <div class="container">
         <h1>Inserir Notas</h1>
-<<<<<<< HEAD
-        <form id="meu-form" action="/api/v1/nota-avalia/cadastro", method="post">
-            {% for categoria in matriz_avaliacao %}
-            <h2>{{ categoria[0] }}</h2>
-=======
         {% set notas_dict = {} %}
         {% for nota in notaAvalia %}
             {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
@@ -120,7 +96,6 @@
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
             <div class="form-group">
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>

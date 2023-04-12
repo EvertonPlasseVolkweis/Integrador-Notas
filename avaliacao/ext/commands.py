@@ -4,36 +4,17 @@ from avaliacao.ext.database import db
 from avaliacao.ext.auth import create_user
 from avaliacao.models import Avaliacao, Disciplina, Equipe, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Sala, Usuario, Turma
 from avaliacao.ext.main import MATRIZ_AVALIACAO
-<<<<<<< HEAD
-=======
 from datetime import datetime
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 
 habilidades_atitudes = MATRIZ_AVALIACAO[1][1]
 def insert_habilidade():
     for secao in MATRIZ_AVALIACAO:
-<<<<<<< HEAD
-        if secao[0] == "Habilidades e Atitudes":
-            for habilidade in secao[1]:
-                nova_habilidade = HabilidadeAtitude(titulo=habilidade, fator_peso=secao[1][habilidade], descricao="")
-                db.session.add(nova_habilidade)
-            for avaliacao_360 in secao[3]:
-                nova_avaliacao_360 = HabilidadeAtitude(titulo=avaliacao_360, fator_peso=secao[3][avaliacao_360], descricao="")
-                db.session.add(nova_avaliacao_360)
-        else:
-            for conhecimento in secao[1]:
-                novo_conhecimento = HabilidadeAtitude(titulo=conhecimento, fator_peso=secao[1][conhecimento], descricao="")
-                db.session.add(novo_conhecimento)
-    db.session.commit()
-
-=======
         for item in secao[1]:
             nova_habilidade = HabilidadeAtitude(titulo=item, fator_peso=secao[1][item], descricao="")
             db.session.add(nova_habilidade)
     db.session.commit()
 
 
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 def insert_equipe():
     nova_equipe = Equipe(apelido='Equipe 2', nome_projeto='Projeto II')
     db.session.add(nova_equipe)
@@ -51,46 +32,28 @@ def insert_sala():
 
 def insert_grupo():
     grupo_professores = Grupo(grupo='Professores')
-<<<<<<< HEAD
-    novo_grupo = Grupo(grupo='Grupo 2')
-=======
     novo_grupo = Grupo(grupo='Alunos')
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     db.session.add(grupo_professores)
     db.session.add(novo_grupo)
     db.session.commit()
 
 def insert_perfil():
-<<<<<<< HEAD
-    perfil_professor = Perfil(perfil='Professor')
-    perfil_aluno = Perfil(perfil='Aluno')
-=======
     perfil_professor = Perfil(perfil='cadastro_provas')
     perfil_aluno = Perfil(perfil='cadastro_avaliacao')
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     db.session.add(perfil_professor)
     db.session.add(perfil_aluno)
     db.session.commit()
 
 def insert_usuario():
-<<<<<<< HEAD
-    usuario_profesoor = Usuario(cpf='12345678900', login='Professor', email='usuario@professor.com', senha='12345678', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=20220312, nome='Professor', ra=111111)
-    usuario_aluno = Usuario(cpf='11111111100', login='Aluno', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=20220312, nome='Aluno', ra=222222)
-=======
     data_cadastro = datetime(2022, 3, 12)
     usuario_profesoor = Usuario(cpf='12345678900', login='Professor Linguiça', email='usuario@professor.com', senha='12345678', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=data_cadastro, nome='Professor Linguiça', ra=111111)
     usuario_aluno = Usuario(cpf='11111111100', login='Lincola', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=data_cadastro, nome='Lincola', ra=222222)
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     db.session.add(usuario_profesoor)
     db.session.add(usuario_aluno)
     db.session.commit()
 
 def insert_turma():
-<<<<<<< HEAD
-    nova_turma = Turma(fk_id_usuario=2, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
-=======
     nova_turma = Turma(fk_id_usuario=1, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
->>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
     db.session.add(nova_turma)
     db.session.commit()
 
