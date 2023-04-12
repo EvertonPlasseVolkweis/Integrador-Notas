@@ -15,13 +15,25 @@
     </style>
 </head>
 <body>
+<<<<<<< HEAD
+=======
+    {% block scripts %}
+    <script>
+    </script>
+    {% endblock %}
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 	{% block content %}
     <div class="container">
         <h1>Tabela Avaliação Turma</h1>
         <table class="table">
             <thead>
                 <tr>
+<<<<<<< HEAD
                     <th>Nome</th>
+=======
+                    <th>Tipo Avaliação</th>
+                    <th>Nome Aluno</th>
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
                     <th>Sala</th>
                     <th>Disciplina</th>
                     <th>Equipe</th>
@@ -32,12 +44,25 @@
             <tbody>
                 {% for item in data %}
                 <tr>
+<<<<<<< HEAD
                     <td>{{ item.nome }}</td>
                     <td>{{ item.sala }}</td>
                     <td>{{ item.disciplina }}</td>
                     <td>{{ item.equipe }}</td>
                     <td>{{ item.avaliacao }}</td>
                     <td><button type="submit" class="btn btn-primary" onclick="window.location.replace('/visualiza-media')">Visualizar</button></td>
+=======
+                    <td>{{ item.titulo }}</td>
+                    <td>{{ item.tipo_avaliacao }}</td>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.numero }}</td>
+                    <td>{{ item.titulo }}</td>
+                    <td>{{ item.apelido }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}" onclick="window.location.replace('/boletim/' + this.getAttribute('data-id'))">Boletim</button>
+                    </td>
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
                 </tr>
                 {% endfor %}
             </tbody>

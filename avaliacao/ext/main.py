@@ -26,6 +26,7 @@ MATRIZ_AVALIACAO_TESTE = {
     },
 }
 
+<<<<<<< HEAD
     # 'Avaliação 360º': {
     #     'porcentagem': 30,
     #     'Autoavaliação': 3,
@@ -34,17 +35,29 @@ MATRIZ_AVALIACAO_TESTE = {
     # }
 
 # Define a matriz de avaliação como constante
+=======
+
+# # Define a matriz de avaliação como constante
+# MATRIZ_AVALIACAO = [
+#     # Conhecimentos
+#     ["Conhecimentos", {"Avaliação objetiva": 0.15, "Unidades de Aprendizagem (Uas)": 0.1, "Avaliação dissertativa": 0.3, "Entrega": 0.15}, 0.7],
+    
+#     # Habilidades e Atitudes
+#     ["Habilidades e Atitudes", 
+#      {"Comunicação Oral e Escrita": 0.1, "Cognitivo": 0.1, "Autogestão": 0.025, "Autonomia": 0.025, "Protagonismo": 0.025, "Interação": 0.025},
+#      0.3,
+#      # Avaliação 360º
+#      {"Autoavaliação": 0.03, "Equipe": 0.03, "Professor": 0.24}
+#     ]
+# ]
+
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 MATRIZ_AVALIACAO = [
     # Conhecimentos
     ["Conhecimentos", {"Avaliação objetiva": 0.15, "Unidades de Aprendizagem (Uas)": 0.1, "Avaliação dissertativa": 0.3, "Entrega": 0.15}, 0.7],
     
     # Habilidades e Atitudes
-    ["Habilidades e Atitudes", 
-     {"Comunicação Oral e Escrita": 0.1, "Cognitivo": 0.1, "Autogestão": 0.025, "Autonomia": 0.025, "Protagonismo": 0.025, "Interação": 0.025},
-     0.3,
-     # Avaliação 360º
-     {"Autoavaliação": 0.03, "Equipe": 0.03, "Professor": 0.24}
-    ]
+    ["Habilidades e Atitudes", {"Comunicação Oral e Escrita": 0.1, "Cognitivo": 0.1, "Autogestão": 0.025, "Autonomia": 0.025, "Protagonismo": 0.025, "Interação": 0.025}, 0.3]
 ]
 
 # Define uma função para calcular a média das notas

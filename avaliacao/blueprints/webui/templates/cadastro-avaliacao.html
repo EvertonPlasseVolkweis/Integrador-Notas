@@ -38,6 +38,10 @@
             // Processa a resposta da requisição
             localStorage.removeItem('avaliacao-salva')
             localStorage.setItem('avaliacao-salva', resultado);
+<<<<<<< HEAD
+=======
+            console.log(resultado);
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
             setTimeout(redirecionaTela, 1000);
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -73,7 +77,22 @@
   </nav>
   <div class="container">
     <h2>Nova Avaliação</h2>
+<<<<<<< HEAD
     <form id="meu-form" action="/api/v1/avaliacao/cadastro" , method="post">
+=======
+    <form id="meu-form" action="/api/v1/avaliacao/cadastro" method="post">
+      <div class="form-group">
+        <label for="descricao">Tipo de Avaliação:</label>
+        <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao">
+          <option value="" disabled selected>Selecione o Tipo de Avaliação</option>
+          {% if grupo.grupo == "Professores" %}
+          <option value="aluno">Avaliação Aluno</option>
+          {% endif %}
+          <option value="colega">Avaliação Colega de Equipe</option>
+          <option value="auto">Auto Avaliação</option>
+        </select>
+      </div>
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
       <div class="form-group">
         <label for="nome">Nome da Avaliação:</label>
         <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação">
@@ -86,14 +105,26 @@
       <div class="form-group">
         <label for="usuarios">Usuários:</label>
         <select class="form-control" id="usuarios" name="usuario">
+<<<<<<< HEAD
           {% for usuario in usuarios %}
           <option value={{usuario.id}}>{{usuario.nome}}</option>
+=======
+          <option value="" disabled selected>Selecione um Usuário</option>
+          {% for usuario in usuarios %}
+          <option value="{{usuario.id}}">{{usuario.nome}}</option>
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
           {% endfor %}
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Salvar</button>
+<<<<<<< HEAD
     </form>
   </div>
+=======
+    </form>    
+  </div>
+  
+>>>>>>> 8e97432adb7cd84f7a1a8062ac6126d72675adf9
 </body>
 
 </html>
