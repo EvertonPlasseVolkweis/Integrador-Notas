@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
+    <title>{% block title %}Tabela Usuario{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<style>
         tr:nth-child(even) {
@@ -21,30 +21,24 @@
     {% endblock %}
 	{% block content %}
     <div class="container">
-        <h1>Tabela Avaliação Turma</h1>
+        <h1>Tabela Usuário</h1>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Tipo Avaliação</th>
-                    <th>Nome Aluno</th>
-                    <th>Sala</th>
-                    <th>Disciplina</th>
-                    <th>Equipe</th>
-                    <th>Avaliação</th>
+                    <th>Nome</th>
+                    <th>RA</th>
+                    <th>CPF</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in data %}
+                {% for item in usuarios %}
                 <tr>
-                    <td>{{ item.tipo_avaliacao }}</td>
                     <td>{{ item.nome }}</td>
-                    <td>{{ item.numero }}</td>
-                    <td>{{ item.titulo }}</td>
-                    <td>{{ item.apelido }}</td>
-                    <td>{{ item.titulo }}</td>
+                    <td>{{ item.ra }}</td>
+                    <td>{{ item.cpf }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}" onclick="window.location.replace('/boletim/' + this.getAttribute('data-id'))">Boletim</button>
                     </td>
                 </tr>
                 {% endfor %}

@@ -140,13 +140,23 @@ def visualiza_avaliacao(item_id):
     print(notaAvalia)
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=True)
 
+
+@login_required
+def visualiza_usuarios():
+    usuarios = Usuario.query.all()
+    return render_template("usuario.html", usuarios=usuarios)
+
+
 @login_required
 def visualiza_boletim(item_nome):
     usuario = Usuario.query.filter_by(nome=item_nome).first()
     consulta = text("select av.titulo, av.descricao, av.tipo_avaliacao, JSON_GROUP_ARRAY(json_object('titulo', ha.titulo, 'nota', na.valor, 'fator_peso', ha.fator_peso)) AS notas from avaliacao av left join nota_avalia na on na.fk_id_avaliacao = av.id  left join habilidade_atitude ha on ha.id = na.fk_id_habilidade_atitude left join usuario us on us.id = av.fk_id_usuario left join grupo g on g.id = us.fk_id_grupo where av.fk_id_usuario = :idUsuario group by av.id")
-    parametros = {'idUsuario': usuario.id} 
+    consulta2 = text("SELECT SUM(total_porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, SUM(porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, habilidade_titulo, nota_percentual, CASE WHEN tipo_avaliacao = 'aluno' THEN nota_percentual * 0.8 WHEN tipo_avaliacao = 'colega' THEN nota_percentual * 0.1 WHEN tipo_avaliacao = 'auto' THEN nota_percentual * 0.1 ELSE nota_percentual END AS porcentagem_nota FROM (SELECT CASE WHEN ha.titulo IN ('Unidades de Aprendizagem (Uas)', 'Entrega', 'Avaliação objetiva', 'Avaliação dissertativa') THEN 'conhecimento' ELSE av.tipo_avaliacao END AS tipo_avaliacao, ha.titulo AS habilidade_titulo, (SUM(summed_na.valor_total) / COUNT(DISTINCT av.id)) * ha.fator_peso AS nota_percentual, ha.fator_peso FROM avaliacao av LEFT JOIN (SELECT fk_id_avaliacao, fk_id_habilidade_atitude, SUM(valor) AS valor_total FROM nota_avalia GROUP BY fk_id_avaliacao, fk_id_habilidade_atitude) summed_na ON summed_na.fk_id_avaliacao = av.id LEFT JOIN habilidade_atitude ha ON ha.id = summed_na.fk_id_habilidade_atitude LEFT JOIN usuario us ON us.id = av.fk_id_usuario LEFT JOIN grupo g ON g.id = us.fk_id_grupo WHERE av.fk_id_usuario = :idUsuario GROUP BY tipo_avaliacao, ha.titulo) subquery) subquery_porcentagem GROUP BY tipo_avaliacao) subquery_total")
+    parametros = {'idUsuario': usuario.id}
     execute = db.session.execute(consulta, parametros)
+    execute2 = db.session.execute(consulta2, parametros)
     result = execute.fetchall()
+    result2 = execute2.fetchall()
 
     array = []
     
@@ -155,6 +165,7 @@ def visualiza_boletim(item_nome):
 
     # Armazena a soma total das notas de todas as avaliações
     soma_total = 0
+    media_final = 0
 
     # Percorre cada avaliação na lista de dados
     for avaliacao in result:
@@ -171,11 +182,10 @@ def visualiza_boletim(item_nome):
         media_arredondada = round(media, 2)
 
         array.append({"titulo": avaliacao[0], "descricao": avaliacao[1], "tipo": avaliacao[2], "media": media_arredondada})
-        
-        # Adiciona a nota total ao somatório
-        soma_total += media
     
     soma_total = round(soma_total / len(result), 2)
+    for avaliacao in result2:
+        print(avaliacao[0])
+        media_final = avaliacao[0]
 
-
-    return render_template("boletim.html", data=array, media_total=soma_total)
+    return render_template("boletim.html", data=array, media_total=media_final)
