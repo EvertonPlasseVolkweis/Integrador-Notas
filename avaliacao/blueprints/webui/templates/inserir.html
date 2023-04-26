@@ -93,23 +93,23 @@
             </select>
             {% endif %}
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
-            {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" %}
+            {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
             <h2>{{ categoria }}</h2>
             <div class="form-group">
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required>            
+                name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if visualizando == True else "" }}>         
                 {% endfor %}
             </div>
             {% endif %}
-            {% if categoria != "Conhecimentos" %}
+            {% if categoria != "Conhecimentos" or notas_dict|length > 6 %}
             <h2>{{ categoria }}</h2>
             <div class="form-group">
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required>
+                name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if visualizando == True else "" }}>
                 {% endfor %}
             </div>
             {% endif %}
