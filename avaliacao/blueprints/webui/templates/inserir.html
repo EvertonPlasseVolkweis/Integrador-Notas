@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+<html>
+{% block head %}
 
 <head>
     <meta charset="UTF-8">
@@ -55,40 +56,22 @@
         });
     </script>
 </head>
+{% endblock %}
+{% block content %}
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
-        <a class="navbar-brand" href="/">Avaliação 360</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cadastrar-avaliacao">Cadastrar Avaliação</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tabela-avaliacao-turma">Tabela Avaliações</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
     <div class="container">
         <h1>Inserir Notas</h1>
         {% set notas_dict = {} %}
         {% for nota in notaAvalia %}
-            {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
+        {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
         {% endfor %}
         <form id="meu-form" action="/api/v1/nota-avalia/cadastro" method="post">
             {% if visualizando != True %}
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
                 {% for avaliacao in avaliacao %}
-                    <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
+                <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
                 {% endfor %}
             </select>
             {% endif %}
@@ -99,7 +82,9 @@
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if visualizando == True else "" }}>         
+                    name="{{ categoria }}-{{ criterio }}"
+                    value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    visualizando==True else "" }}>
                 {% endfor %}
             </div>
             {% endif %}
@@ -109,7 +94,9 @@
                 {% for criterio, peso in itens.items() %}
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                name="{{ categoria }}-{{ criterio }}" value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if visualizando == True else "" }}>
+                    name="{{ categoria }}-{{ criterio }}"
+                    value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    visualizando==True else "" }}>
                 {% endfor %}
             </div>
             {% endif %}
@@ -144,6 +131,6 @@
         });
     </script>
 </body>
-
+{% endblock %}
 
 </html>
