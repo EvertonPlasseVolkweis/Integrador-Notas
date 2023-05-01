@@ -5,6 +5,7 @@ from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACA
 from avaliacao.models import Avaliacao, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Usuario, Turma, Sala, Disciplina, Equipe
 from avaliacao.ext.database import db
 from sqlalchemy import text
+from flask import flash, redirect, url_for
 import json
 
 
@@ -54,11 +55,29 @@ def inserir_notas():
 
 @login_required
 def cadastro_avaliacao():
-    usuario = Usuario.query.all()
+    usuario = []
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    if grupo.grupo == "Alunos":
+        consulta = text("""
+            SELECT u.nome, t.fk_id_equipe, u.id
+            FROM usuario u
+            LEFT JOIN turma t ON t.fk_id_usuario = u.id
+            WHERE t.fk_id_equipe = (
+                SELECT t2.fk_id_equipe
+                FROM usuario u2
+                JOIN turma t2 ON t2.fk_id_usuario = u2.id
+                WHERE u2.nome = :idUsuario
+            );"""
+        )
+        parametros = {'idUsuario': user.nome}
+        execute = db.session.execute(consulta, parametros)
+        result = execute.fetchall()
+        usuario = result
+    else:
+        usuario = Usuario.query.all()
     return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo)
 
 
@@ -157,35 +176,41 @@ def visualiza_boletim(item_nome):
     execute2 = db.session.execute(consulta2, parametros)
     result = execute.fetchall()
     result2 = execute2.fetchall()
-
-    array = []
-    
-    # Cria um dicionário para armazenar as médias de cada avaliação
-    medias = {}
-
-    # Armazena a soma total das notas de todas as avaliações
-    soma_total = 0
-    media_final = 0
-
-    # Percorre cada avaliação na lista de dados
-    for avaliacao in result:
-        # Converte a string em um dicionário
-        aval_dict = json.loads(avaliacao[3])
+    print(result)
+    print(result2)
+    if not result:  # Verifica se result2 é uma lista vazia
+        flash("Não há avaliações disponíveis para este usuário.", "error")
+        return redirect(url_for("webui.visualiza_usuarios"))  # Redireciona para a página desejada
+    else:
+        print(result2)
+        array = []
         
-        # Calcula a média da avaliação
-        media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]) / sum([a['fator_peso'] for a in aval_dict])
-        
-        # Armazena a média no dicionário medias
-        medias[avaliacao[0]] = media
-        
-        # Arredonda a média para duas casas decimais
-        media_arredondada = round(media, 2)
+        # Cria um dicionário para armazenar as médias de cada avaliação
+        medias = {}
 
-        array.append({"titulo": avaliacao[0], "descricao": avaliacao[1], "tipo": avaliacao[2], "media": media_arredondada})
-    
-    soma_total = round(soma_total / len(result), 2)
-    for avaliacao in result2:
-        print(avaliacao[0])
-        media_final = avaliacao[0]
+        # Armazena a soma total das notas de todas as avaliações
+        soma_total = 0
+        media_final = 0
 
-    return render_template("boletim.html", data=array, media_total=media_final)
+        # Percorre cada avaliação na lista de dados
+        for avaliacao in result:
+            # Converte a string em um dicionário
+            aval_dict = json.loads(avaliacao[3])
+            
+            # Calcula a média da avaliação
+            media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]) / sum([a['fator_peso'] for a in aval_dict])
+            
+            # Armazena a média no dicionário medias
+            medias[avaliacao[0]] = media
+            
+            # Arredonda a média para duas casas decimais
+            media_arredondada = round(media, 2)
+
+            array.append({"titulo": avaliacao[0], "descricao": avaliacao[1], "tipo": avaliacao[2], "media": media_arredondada})
+        
+        soma_total = round(soma_total / len(result), 2)
+        for avaliacao in result2:
+            print(avaliacao[0])
+            media_final = avaliacao[0]
+
+        return render_template("boletim.html", data=array, media_total=media_final)
