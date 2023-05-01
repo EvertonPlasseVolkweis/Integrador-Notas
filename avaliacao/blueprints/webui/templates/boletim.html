@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
 <html>
+{% block head %}
+
 <head>
     <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<style>
+    <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
@@ -14,15 +15,10 @@
         }
     </style>
 </head>
+{% endblock %}
+{% block content %}
+
 <body>
-    {% block scripts %}
-    <script>
-        function a(as) {
-            console.log(as);
-        }
-    </script>
-    {% endblock %}
-	{% block content %}
     <div class="container">
         <h1>Tabela Boletim</h1>
         <table class="table">
@@ -47,6 +43,7 @@
         </table>
         <h1>Média Parcial: {{media_total}}</h1>
     </div>
-	{% endblock %}
 </body>
+{% endblock %}
+
 </html>
