@@ -13,14 +13,32 @@
         tr:nth-child(odd) {
             background-color: #ffffff;
         }
+
+        .voltar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 20px;
+        }
     </style>
 </head>
 {% endblock %}
 {% block content %}
 
 <body>
+    {% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function voltar() {
+            window.location.replace("/usuarios");
+        }
+    </script>
+    {% endblock %}
     <div class="container">
-        <h1>Tabela Boletim</h1>
+        <div class="voltar">
+            <h1>Tabela Boletim</h1>
+            <button type="submit" class="btn btn-primary" onclick="voltar()">Voltar</button>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -35,7 +53,15 @@
                 <tr>
                     <td>{{ item.titulo }}</td>
                     <td>{{ item.descricao }}</td>
-                    <td>{{ item.tipo }}</td>
+                    {% if item.tipo == "auto" %}
+                    <td>Auto Avaliação</td>
+                    {% endif %}
+                    {% if item.tipo == "colega" %}
+                    <td>Avaliação Colega de Equipe</td>
+                    {% endif %}
+                    {% if item.tipo == "aluno" %}
+                    <td>Avaliação Professor</td>
+                    {% endif %}
                     <td>{{ item.media }}</td>
                 </tr>
                 {% endfor %}

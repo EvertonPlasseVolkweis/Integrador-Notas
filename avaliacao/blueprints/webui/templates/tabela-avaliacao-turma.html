@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
 <html>
+{% block head %}
+
 <head>
     <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<style>
+    <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
@@ -12,16 +13,32 @@
         tr:nth-child(odd) {
             background-color: #ffffff;
         }
+
+        .voltar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 20px;
+        }
     </style>
 </head>
+{% endblock %}
+{% block content %}
+
 <body>
     {% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        function voltar() {
+            window.location.replace("/usuarios");
+        }
     </script>
     {% endblock %}
-	{% block content %}
     <div class="container">
-        <h1>Tabela Avaliação Turma</h1>
+        <div class="voltar">
+            <h1>Tabela Avaliação Turma</h1>
+            <button type="submit" class="btn btn-primary" onclick="voltar()">Voltar</button>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -30,27 +47,35 @@
                     <th>Sala</th>
                     <th>Disciplina</th>
                     <th>Equipe</th>
-                    <th>Avaliação</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in data %}
                 <tr>
-                    <td>{{ item.tipo_avaliacao }}</td>
+                    {% if item.tipo_avaliacao == "auto" %}
+                    <td>Auto Avaliação</td>
+                    {% endif %}
+                    {% if item.tipo_avaliacao == "colega" %}
+                    <td>Avaliação Colega de Equipe</td>
+                    {% endif %}
+                    {% if item.tipo_avaliacao == "aluno" %}
+                    <td>Avaliação Professor</td>
+                    {% endif %}
                     <td>{{ item.nome }}</td>
                     <td>{{ item.numero }}</td>
                     <td>{{ item.titulo }}</td>
                     <td>{{ item.apelido }}</td>
-                    <td>{{ item.titulo }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}"
+                            onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-	{% endblock %}
 </body>
+{% endblock %}
+
 </html>
