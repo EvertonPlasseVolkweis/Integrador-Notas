@@ -4,7 +4,6 @@
 
 <head>
     <title>{% block title %}Tabela Usuario{% endblock %}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -14,12 +13,7 @@
             background-color: #ffffff;
         }
     </style>
-</head>
-{% endblock %}
-{% block content %}
-
-<body>
-    {% block scripts %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
@@ -53,7 +47,12 @@
             });
         }
     </script>
-    {% endblock %}
+</head>
+{% endblock %}
+{% block content %}
+
+<body>
+
     <div class="container">
         <h1>Tabela Usuário</h1>
         <table class="table">
@@ -73,9 +72,9 @@
                     <td>{{ item.cpf }}</td>
                     <td>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}"
-                            onclick="visualizarBoletim(this.getAttribute('data-id'))">Boletim</button>
+                            onclick="visualizarBoletim(this.getAttribute('data-id'))"><i class="bi bi-mortarboard-fill"></i></button>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.id }}"
-                            onclick="buscaAvaliacoes(this.getAttribute('data-id'))">Avaliações</button>
+                            onclick="buscaAvaliacoes(this.getAttribute('data-id'))"><i class="bi bi-layout-text-sidebar-reverse"></i></button>
                     </td>
                 </tr>
                 {% endfor %}

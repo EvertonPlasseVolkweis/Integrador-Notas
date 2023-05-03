@@ -14,11 +14,18 @@
             background-color: #ffffff;
         }
 
-        .voltar {
+        .box {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            margin: 20px;
+        }
+
+        .voltar {
+            justify-content: space-between;
+        }
+
+        .media {
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -35,10 +42,7 @@
     </script>
     {% endblock %}
     <div class="container">
-        <div class="voltar">
-            <h1>Tabela Boletim</h1>
-            <button type="submit" class="btn btn-primary" onclick="voltar()">Voltar</button>
-        </div>
+        <h1>Tabela Boletim</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -67,7 +71,17 @@
                 {% endfor %}
             </tbody>
         </table>
-        <h1>Média: {{media_total}}</h1>
+        <div class="box">
+            <div class="voltar">
+                <button type="submit" class="btn btn-primary" onclick="voltar()" data-toggle="tooltip"
+                    data-placement="top" title="Voltar">
+                    <i class="bi bi-arrow-return-left"></i>
+                </button>
+            </div>
+            <div class="media">
+                <h1>Média: {{media_total}}</h1>
+            </div>
+        </div>
     </div>
 </body>
 {% endblock %}
