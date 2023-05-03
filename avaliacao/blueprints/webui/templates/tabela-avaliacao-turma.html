@@ -14,11 +14,19 @@
             background-color: #ffffff;
         }
 
-        .voltar {
+
+        .box {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            margin: 20px;
+        }
+
+        .voltar {
+            justify-content: space-between;
+        }
+
+        .media {
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -37,7 +45,6 @@
     <div class="container">
         <div class="voltar">
             <h1>Tabela Avaliação Turma</h1>
-            <button type="submit" class="btn btn-primary" onclick="voltar()">Voltar</button>
         </div>
         <table class="table">
             <thead>
@@ -68,12 +75,20 @@
                     <td>{{ item.apelido }}</td>
                     <td>
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}"
-                            onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))">Visualizar</button>
+                            onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))"><i class="bi bi-info-circle"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <div class="box">
+            <div class="voltar">
+                <button type="submit" class="btn btn-primary" onclick="voltar()" data-toggle="tooltip"
+                    data-placement="top" title="Voltar">
+                    <i class="bi bi-arrow-return-left"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </body>
 {% endblock %}
