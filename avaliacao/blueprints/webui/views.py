@@ -52,7 +52,7 @@ def professor_required(view_function):
             user = Usuario.query.filter_by(id=idUsuario).first()
             perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
 
-            if perfil.perfil != "professor":
+            if perfil.perfil != "professor" and perfil.perfil != "admin":
                 return redirect("/")
 
         except Exception as e:
@@ -98,9 +98,10 @@ def inserir_notas():
     user = Usuario.query.filter_by(id=idUsuario).first()
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-    avaliacao = Avaliacao.query.filter_by(tem_nota=False).all()
+    avaliacao = Avaliacao.query.filter_by(tem_nota=False, fk_id_usuario=idUsuario).all()
     matriz = MATRIZ_AVALIACAO
-    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, avaliacao=avaliacao, perfil=perfil)
+    matriz = MATRIZ_AVALIACAO
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, avaliacao=avaliacao, perfil=perfil, editando=False)
 
 
 @login_required
@@ -133,11 +134,11 @@ def cadastro_avaliacao():
 
 
 @login_required
-@professor_required
 def tabela_avaliacao_turma(item_id):
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
+    usuario = Usuario.query.filter_by(id=item_id).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     consulta = text("""
     SELECT a.titulo, a.tipo_avaliacao, u.nome, s.numero, d.titulo, e.apelido, a.id
@@ -153,9 +154,16 @@ def tabela_avaliacao_turma(item_id):
     result = execute.fetchall()
     if not result:  # Verifica se result2 é uma lista vazia
         flash("Não há avaliações disponíveis para este usuário.", "error")
+        print('ife1')
         return jsonify({"error": True})
     else:
-        return render_template("tabela-avaliacao-turma.html", data=result, perfil=perfil)
+        if perfil.perfil != 'professor' and perfil.perfil != 'admin' and user.id != usuario.id:
+            flash("Você não tem permissão para acessar este boletim.", "error")
+            print('ife2')
+            return redirect(url_for('webui.visualiza_usuarios'))
+        else:
+            print('eles')
+            return render_template("tabela-avaliacao-turma.html", data=result, perfil=perfil)
 
 
 @login_required
@@ -221,17 +229,34 @@ def visualiza_avaliacao(item_id):
 
 @login_required
 @professor_required
+def edita_avaliacao(item_id):
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    matriz = MATRIZ_AVALIACAO
+    avaliacao = Avaliacao.query.filter_by(id=item_id).first()
+    notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, avaliacaoId=item_id)
+
+
+@login_required
 def visualiza_usuarios():
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-    usuarios = Usuario.query.all()
+
+    if perfil.perfil == 'professor' or perfil.perfil == 'admin':
+        usuarios = Usuario.query.all()
+    else:
+        usuarios = [user]
+
     return render_template("usuario.html", usuarios=usuarios, perfil=perfil)
 
 
 @login_required
-@professor_required
 def visualiza_boletim(item_nome):
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
@@ -249,35 +274,39 @@ def visualiza_boletim(item_nome):
         flash("Não há avaliações disponíveis para este usuário.", "error")
         return jsonify({"error": True})
     else:
-        array = []
+        if perfil.perfil != 'professor' and perfil.perfil != 'admin' and user.id != usuario.id:
+            flash("Você não tem permissão para acessar este boletim.", "error")
+            return redirect(url_for('webui.visualiza_usuarios'))
+        else:
+            array = []
 
-        # Cria um dicionário para armazenar as médias de cada avaliação
-        medias = {}
+            # Cria um dicionário para armazenar as médias de cada avaliação
+            medias = {}
 
-        # Armazena a soma total das notas de todas as avaliações
-        soma_total = 0
-        media_final = 0
+            # Armazena a soma total das notas de todas as avaliações
+            soma_total = 0
+            media_final = 0
 
-        # Percorre cada avaliação na lista de dados
-        for avaliacao in result:
-            # Converte a string em um dicionário
-            aval_dict = json.loads(avaliacao[3])
+            # Percorre cada avaliação na lista de dados
+            for avaliacao in result:
+                # Converte a string em um dicionário
+                aval_dict = json.loads(avaliacao[3])
 
-            # Calcula a média da avaliação
-            media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]
-                        ) / sum([a['fator_peso'] for a in aval_dict])
+                # Calcula a média da avaliação
+                media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]
+                            ) / sum([a['fator_peso'] for a in aval_dict])
 
-            # Armazena a média no dicionário medias
-            medias[avaliacao[0]] = media
+                # Armazena a média no dicionário medias
+                medias[avaliacao[0]] = media
 
-            # Arredonda a média para duas casas decimais
-            media_arredondada = round(media, 2)
+                # Arredonda a média para duas casas decimais
+                media_arredondada = round(media, 2)
 
-            array.append({"titulo": avaliacao[0], "descricao": avaliacao[1],
-                         "tipo": avaliacao[2], "media": media_arredondada})
+                array.append({"titulo": avaliacao[0], "descricao": avaliacao[1],
+                            "tipo": avaliacao[2], "media": media_arredondada})
 
-        soma_total = round(soma_total / len(result), 2)
-        for avaliacao in result2:
-            media_final = avaliacao[0]
+            soma_total = round(soma_total / len(result), 2)
+            for avaliacao in result2:
+                media_final = avaliacao[0]
 
-        return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil)
+            return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil)

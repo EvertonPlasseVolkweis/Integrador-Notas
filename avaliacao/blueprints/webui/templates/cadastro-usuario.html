@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -61,74 +60,76 @@
   <div class="container">
     <h2>Novo Usuário</h2>
     <form id="meu-form" action="/api/v1/cadastro-usuario" method="post">
-      <div class="form-group">
-        <label for="cpf">CPF:</label>
-        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite o CPF" required>
-      </div>
-      <div class="form-group">
-        <label for="login">Login:</label>
-        <input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Digite o email" required>
-      </div>
-      <div class="form-group">
-        <label for="senha">Senha:</label>
-        <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha" required>
-      </div>
-      <div class="form-group">
-        <label for="grupo">Grupo:</label>
-        <select class="form-control" id="grupo" name="grupo" required>
-          <option value="" disabled selected>Selecione o Grupo</option>
-          {% for grupo in grupos %}
-          <option value={{grupo.id}}>{{grupo.grupo}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="perfil">Perfil:</label>
-        <select class="form-control" id="perfil" name="perfil" required>
-          <option value="" disabled selected>Selecione o Perfil</option>
-          {% for perfil in perfis %}
-          <option value={{perfil.id}}>{{perfil.perfil}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="equipe">Equipe:</label>
-        <select class="form-control" id="equipe" name="equipe" required>
-          <option value="" disabled selected>Selecione a Equipe</option>
-          {% for equipe in equipe %}
-          <option value={{equipe.id}}>{{equipe.apelido}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="sala">Sala:</label>
-        <select class="form-control" id="sala" name="sala" required>
-          <option value="" disabled selected>Selecione a Sala</option>
-          {% for sala in sala %}
-          <option value={{sala.id}}>{{sala.numero}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="disciplina">Disciplina:</label>
-        <select class="form-control" id="disciplina" name="disciplina" required>
-          <option value="" disabled selected>Selecione a Disciplina</option>
-          {% for disciplina in disciplina %}
-          <option value={{disciplina.id}}>{{disciplina.titulo}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="nome">Nome:</label>
-        <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
-      </div>
-      <div class="form-group">
-        <label for="ra">RA:</label>
-        <input type="text" class="form-control" id="ra" name="ra" placeholder="Digite o RA" required>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="login">Login:</label>
+            <input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Digite o email" required>
+          </div>
+          <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha" required>
+          </div>
+          <div class="form-group">
+            <label for="grupo">Grupo:</label>
+            <select class="form-control" id="grupo" name="grupo" required>
+              <option value="" disabled selected>Selecione o Grupo</option>
+              {% for grupo in grupos %}
+              <option value={{grupo.id}}>{{grupo.grupo}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="perfil">Perfil:</label>
+            <select class="form-control" id="perfil" name="perfil" required>
+              <option value="" disabled selected>Selecione o Perfil</option>
+              {% for perfil in perfis %}
+              <option value={{perfil.id}}>{{perfil.perfil}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="equipe">Equipe:</label>
+            <select class="form-control" id="equipe" name="equipe" required>
+              <option value="" disabled selected>Selecione a Equipe</option>
+              {% for equipe in equipe %}
+              <option value={{equipe.id}}>{{equipe.apelido}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sala">Sala:</label>
+            <select class="form-control" id="sala" name="sala" required>
+              <option value="" disabled selected>Selecione a Sala</option>
+              {% for sala in sala %}
+              <option value={{sala.id}}>{{sala.numero}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="disciplina">Disciplina:</label>
+            <select class="form-control" id="disciplina" name="disciplina" required>
+              <option value="" disabled selected>Selecione a Disciplina</option>
+              {% for disciplina in disciplina %}
+              <option value={{disciplina.id}}>{{disciplina.titulo}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
+          </div>
+          <div class="form-group">
+            <label for="ra">RA:</label>
+            <input type="text" class="form-control" id="ra" name="ra" placeholder="Digite o RA" required>
+          </div>
+        </div>
       </div>
       <button type="submit" class="btn btn-primary">Salvar</button>
     </form>

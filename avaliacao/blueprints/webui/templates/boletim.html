@@ -79,7 +79,7 @@
                 </button>
             </div>
             <div class="media">
-                <h1>Média: {{media_total}}</h1>
+                <h1>Média: {{ (media_total|float)|round(2, 'floor') }}</h1> 
             </div>
         </div>
     </div>

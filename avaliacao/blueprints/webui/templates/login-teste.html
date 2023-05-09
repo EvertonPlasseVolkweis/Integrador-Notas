@@ -98,7 +98,7 @@
                         console.log(response.message);
                     },
                     error: function (xhr, status, error) {
-                        console.log(error);
+                        toastr.error(xhr.responseJSON.message);
                     }
                 });
             });

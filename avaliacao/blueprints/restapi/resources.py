@@ -24,6 +24,12 @@ class CadastroAvaliacaoResource(Resource):
     def post(self):
         dados = request.get_json()
         print(dados)
+        
+        # Verifica se já existe uma avaliação com o mesmo título
+        existing_avaliacao = Avaliacao.query.filter_by(titulo=dados['avaliacao']).first()
+        if existing_avaliacao:
+            abort(409, "Avaliação já existente com o mesmo título.")
+        
         novaAvaliacao = Avaliacao(
             titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0, fk_id_usuario=dados['usuario'])
         db.session.add(novaAvaliacao)
@@ -78,6 +84,8 @@ class BuscarAvaliacaoResource(Resource):
         )
 
 
+from flask import abort
+
 class BuscarUsuario(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -90,15 +98,25 @@ class BuscarUsuario(Resource):
         data = request.get_json()
         email = data['email']
         password = data['senha']
-        user = Usuario.query.filter_by(
-            email=email, senha=password).first() or abort(204)
-        if user:
-            access_token = create_access_token(identity=user.id)
-            response = make_response({"message": "Login bem-sucedido"}, 200)
-            response.set_cookie("access_token", access_token, httponly=True)
-            return response
-        else:
-            return {'error': 'Nome de usuário ou senha incorretos!'}, 401
+
+        # Verifica se o email e a senha são fornecidos
+        if not email or not password:
+            abort(400, "Email e senha são obrigatórios.")
+        
+        # Verifica se o usuário existe
+        user = Usuario.query.filter_by(email=email).first()
+        if not user:
+            abort(404, "Usuário não encontrado.")
+        
+        # Verifica se a senha corresponde ao usuário
+        if user.senha != password:
+            abort(401, "Senha incorreta.")
+        
+        access_token = create_access_token(identity=user.id)
+        response = make_response({"message": "Login bem-sucedido"}, 200)
+        response.set_cookie("access_token", access_token, httponly=True)
+        return response
+
 
 
 class CadastroUsuario(Resource):
@@ -130,4 +148,38 @@ class LogoutResource(Resource):
         response = make_response(redirect('/login'))
         response.delete_cookie('access_token')
         return response
+    
 
+class EditAvaliacao(Resource):
+    def put(self, avaliacaoId):
+        print(avaliacaoId)
+        data = request.get_json()
+        print(data)
+        notas = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacaoId).all()
+        print(notas)
+        for nota in notas:
+            if nota.habilidade_atitude.titulo in data:
+                nota.valor = data[nota.habilidade_atitude.titulo]
+        
+        db.session.commit()
+        response = make_response({"message": "Notas editadas com sucesso"}, 200)
+        return response
+
+
+class DeleteAvaliacao(Resource):
+    def delete(self, avaliacaoId):
+        print(avaliacaoId)
+        avaliacao = Avaliacao.query.get(avaliacaoId)
+        
+        if avaliacao is None:
+            return make_response({"message": "Avaliação não encontrada"}, 404)
+        
+        notas = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacaoId).all()
+        
+        for nota in notas:
+            db.session.delete(nota)
+        
+        db.session.delete(avaliacao)
+        db.session.commit()
+        
+        return make_response({"message": "Avaliação e notas deletadas com sucesso"}, 200)

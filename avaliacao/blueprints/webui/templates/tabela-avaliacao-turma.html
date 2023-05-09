@@ -36,9 +36,26 @@
 <body>
     {% block scripts %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         function voltar() {
             window.location.replace("/usuarios");
+        }
+        function deleteAvaliacao(avaliacaoId) {
+            if (confirm('Deseja realmente deletar essa avaliação?')) {
+                $.ajax({
+                    url: '/api/v1/nota-avalia/deletar/' + avaliacaoId,
+                    type: 'DELETE',
+                    success: function (response) {
+                        toastr.success(response.message);
+                        location.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        toastr.error("Erro ao deletar avaliação: " + errorThrown);
+                    }
+                });
+            }
         }
     </script>
     {% endblock %}
@@ -74,8 +91,16 @@
                     <td>{{ item.titulo }}</td>
                     <td>{{ item.apelido }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}"
-                            onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))"><i class="bi bi-info-circle"></i></button>
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Visualizar"
+                            onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))"><i
+                                class="bi bi-info-circle"></i></button>
+                        {% if perfil.perfil != 'aluno' %}
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Editar"
+                            onclick="window.location.replace('/edita-avaliacao/' + this.getAttribute('data-id'))"><i
+                                class="bi bi-pencil"></i></button>
+                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Excluir"
+                            onclick="deleteAvaliacao(this.getAttribute('data-id'))"><i class="bi bi-trash"></i></button>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

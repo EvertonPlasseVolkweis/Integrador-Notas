@@ -10,6 +10,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
   <script>
     function redirecionaTela() {
       window.location.replace('/inserir-notas')
@@ -40,10 +42,11 @@
             localStorage.removeItem('avaliacao-salva')
             localStorage.setItem('avaliacao-salva', resultado);
             console.log(resultado);
-            setTimeout(redirecionaTela, 1000);
+            toastr.success("Avaliação salva com sucesso!");
+            setTimeout(redirecionaTelaNotas, 1000);
           },
           error: function (jqXHR, textStatus, errorThrown) {
-            // Trata o erro da requisição
+            toastr.error(jqXHR.responseJSON.message);
             console.error(errorThrown);
           }
         });
