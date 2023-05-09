@@ -9,47 +9,50 @@
     <title>Inserir Notas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    {% set editando_js = "true" if editando else "false" %}
     <script>
-        function redirecionaTela() {
-            window.location.replace('/')
-        }
         $(function () {
             $('#meu-form').on('submit', function (event) {
-                event.preventDefault(); // Previne o envio padrão do formulário
+                event.preventDefault();
+                var url = $(this).attr('action');
+                var dados = $(this).serializeArray();
+                var editando = '{{ editando_js }}' === 'true';
 
-                var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
-                var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
-
-                // Converte os dados para um objeto JSON
                 var dados_json = {};
                 const avaliacaoObj = dados.find((obj) => obj.name === "avaliacao");
-                console.log(avaliacaoObj);
                 const newArray = dados.filter((obj) => obj.name !== "avaliacao");
                 dados = newArray;
                 for (var i = 0; i < dados.length; i++) {
-                    var partes = dados[i].name.split("-"); // Divide o nome em duas partes separadas por hífen
-                    dados_json[partes[1].trim()] = dados[i].value; // Atualiza o nome do objeto JSON com o texto após o hífen
+                    var partes = dados[i].name.split("-");
+                    dados_json[partes[1].trim()] = dados[i].value;
                 }
-                // Adiciona o avaliacaoObj ao objeto dados_json
-                dados_json[avaliacaoObj.name] = avaliacaoObj.value;
-
+                if (avaliacaoObj) {
+                    dados_json[avaliacaoObj.name] = avaliacaoObj.value;
+                }
+                console.log(editando);
                 console.log(dados_json);
-                // Envia a requisição POST com o cabeçalho Content-Type: application/json
                 $.ajax({
                     url: url,
-                    type: 'POST',
+                    type: editando ? 'PUT' : 'POST',
                     dataType: 'json',
                     contentType: 'application/json',
                     data: JSON.stringify(dados_json),
                     success: function (resultado) {
-                        setTimeout(redirecionaTela, 1000);
+                        console.log(resultado);
+                        toastr.success(resultado.message);
+                        if (editando) {
+                            setTimeout(redirecionaTela, 1000);
+                        } else {
+                            setTimeout(redirecionaTelahHome, 1000);
+                        }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('asdasd', errorThrown);
+                        console.error('Erro aaaaa', errorThrown);
                     }
                 });
             });
@@ -60,14 +63,29 @@
 {% block content %}
 
 <body>
+    {% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const avaliacaoId = "{{ avaliacaoId }}";
+
+        function redirecionaTela() {
+            window.location.replace('/tabela-avaliacao-turma/' + avaliacaoId);
+        }
+        function redirecionaTelahHome() {
+            window.location.replace('/');
+        }
+    </script>
+    {% endblock %}
     <div class="container">
         <h1>Inserir Notas</h1>
         {% set notas_dict = {} %}
         {% for nota in notaAvalia %}
         {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
         {% endfor %}
-        <form id="meu-form" action="/api/v1/nota-avalia/cadastro" method="post">
-            {% if visualizando != True %}
+        <form id="meu-form"
+            action="{{ '/api/v1/nota-avalia/editar/' + (avaliacaoId|string) if editando else '/api/v1/nota-avalia/cadastro' }}"
+            method="post">
+            {% if visualizando != True and editando != True%}
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
                 {% for avaliacao in avaliacao %}
@@ -83,7 +101,7 @@
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}"
-                    value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" required {{ "disabled" if
                     visualizando==True else "" }}>
                 {% endfor %}
             </div>
@@ -95,13 +113,15 @@
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}"
-                    value="{{ notas_dict[criterio] if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" required {{ "disabled" if
                     visualizando==True else "" }}>
                 {% endfor %}
             </div>
             {% endif %}
             {% endfor %}
-            <button type="submit" class="btn btn-primary">Enviar</button>
+            {% if visualizando != True %}
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            {% endif %}
         </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -118,6 +138,10 @@
             var inputs = document.querySelectorAll('input[type="text"]');
             inputs.forEach(function (input) {
                 input.addEventListener('input', function () {
+                    // Remove caracteres indesejados
+                    input.value = input.value.replace(/[^0-9]/g, '');
+
+                    // Verifica o valor e limita o intervalo de 0 a 10
                     var value = parseInt(input.value);
                     if (isNaN(value)) {
                         input.value = '';

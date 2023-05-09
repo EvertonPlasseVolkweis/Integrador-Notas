@@ -13,11 +13,28 @@
             background-color: #ffffff;
         }
     </style>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Insira as mensagens do flash em uma variável JavaScript
+            var flashMessages = JSON.parse('{{ get_flashed_messages(with_categories=true)|tojson }}');
+
+            // Verifique se há mensagens flash
+            if (flashMessages.length > 0) {
+                flashMessages.forEach(function (message) {
+                    var category = message[0];
+                    var content = message[1];
+                    toastr[category](content);
+                });
+            }
+        });
+
         function visualizarBoletim(nome) {
             $.ajax({
                 url: "/boletim/" + nome,
@@ -52,7 +69,6 @@
 {% block content %}
 
 <body>
-
     <div class="container">
         <h1>Tabela Usuário</h1>
         <table class="table">
@@ -71,10 +87,12 @@
                     <td>{{ item.ra }}</td>
                     <td>{{ item.cpf }}</td>
                     <td>
-                        <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}"
-                            onclick="visualizarBoletim(this.getAttribute('data-id'))"><i class="bi bi-mortarboard-fill"></i></button>
-                        <button type="submit" class="btn btn-primary" data-id="{{ item.id }}"
-                            onclick="buscaAvaliacoes(this.getAttribute('data-id'))"><i class="bi bi-layout-text-sidebar-reverse"></i></button>
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.nome }}" data-toggle="tooltip" data-placement="top" title="Boletim"
+                            onclick="visualizarBoletim(this.getAttribute('data-id'))"><i
+                                class="bi bi-mortarboard-fill"></i></button>
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Avaliações"
+                            onclick="buscaAvaliacoes(this.getAttribute('data-id'))"><i
+                                class="bi bi-layout-text-sidebar-reverse"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
