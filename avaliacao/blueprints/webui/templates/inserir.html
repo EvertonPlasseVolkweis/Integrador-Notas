@@ -101,7 +101,8 @@
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}"
-                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
+                    grupo.grupo=="Alunos" }} {{ "disabled" if
                     visualizando==True else "" }}>
                 {% endfor %}
             </div>
@@ -113,7 +114,8 @@
                 <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
                 <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                     name="{{ categoria }}-{{ criterio }}"
-                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" required {{ "disabled" if
+                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
+                    grupo.grupo=="Alunos" }} {{ "disabled" if
                     visualizando==True else "" }}>
                 {% endfor %}
             </div>
