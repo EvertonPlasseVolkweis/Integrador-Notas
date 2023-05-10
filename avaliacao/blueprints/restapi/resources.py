@@ -24,14 +24,12 @@ class CadastroAvaliacaoResource(Resource):
     def post(self):
         dados = request.get_json()
         print(dados)
-        
         # Verifica se já existe uma avaliação com o mesmo título
         existing_avaliacao = Avaliacao.query.filter_by(titulo=dados['avaliacao']).first()
         if existing_avaliacao:
             abort(409, "Avaliação já existente com o mesmo título.")
-        
         novaAvaliacao = Avaliacao(
-            titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0, fk_id_usuario=dados['usuario'])
+            titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0, fk_id_usuario=idUsuario)
         db.session.add(novaAvaliacao)
         db.session.commit()
         avaliacaoSaved = Avaliacao.query.filter_by(
@@ -57,7 +55,9 @@ class NotaAvaliaResource(Resource):
             habilidade_atitude = HabilidadeAtitude.query.filter_by(
                 titulo=nome_habilidade).first()
             if habilidade_atitude is not None:
-                nota_avalia = NotaAvalia(
+                print(valor)
+                if valor != '':
+                    nota_avalia = NotaAvalia(
                     fk_id_avaliacao=idAvaliacao, fk_id_habilidade_atitude=habilidade_atitude.id, comentario='', valor=valor)
                 db.session.add(nota_avalia)
         avaliacao = Avaliacao.query.filter_by(id=idAvaliacao).first() or abort(

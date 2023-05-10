@@ -98,6 +98,7 @@ def inserir_notas():
     user = Usuario.query.filter_by(id=idUsuario).first()
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    print(idUsuario)
     avaliacao = Avaliacao.query.filter_by(tem_nota=False, fk_id_usuario=idUsuario).all()
     matriz = MATRIZ_AVALIACAO
     matriz = MATRIZ_AVALIACAO
@@ -130,7 +131,7 @@ def cadastro_avaliacao():
         usuario = result
     else:
         usuario = Usuario.query.all()
-    return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo, perfil=perfil)
+    return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo, perfil=perfil, idUsuario=idUsuario)
 
 
 @login_required
