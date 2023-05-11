@@ -21,9 +21,9 @@ class UsuariosResource(Resource):
 
 class CadastroAvaliacaoResource(Resource):
     # modelo post
-    def post(self):
+    def post(self, idUsuario):
         dados = request.get_json()
-        print(dados)
+        print(idUsuario)
         # Verifica se já existe uma avaliação com o mesmo título
         existing_avaliacao = Avaliacao.query.filter_by(titulo=dados['avaliacao']).first()
         if existing_avaliacao:

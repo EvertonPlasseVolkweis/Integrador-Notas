@@ -92,6 +92,21 @@ def cadastro_usuario():
 
 
 @login_required
+@admin_required
+def cadastro_turma():
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    usuarios = Usuario.query.all()
+    equipe = Equipe.query.all()
+    sala = Sala.query.all()
+    disciplina = Disciplina.query.all()
+    return render_template("cadastro-turma.html", equipe=equipe, sala=sala, disciplina=disciplina, usuarios=usuarios, perfil=perfil)
+
+
+
+@login_required
 def inserir_notas():
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
