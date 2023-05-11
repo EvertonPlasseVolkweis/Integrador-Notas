@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+<html>
+{% block head %}
+
+<head>
+    <title>Tela de cadastro de turma</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function redirecionaTela() {
+            window.location.replace('/')
+        }
+        $(function () {
+            $('#meu-form').on('submit', function (event) {
+                event.preventDefault(); // Previne o envio padrão do formulário
+
+                var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
+                var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
+
+                // Converte os dados para um objeto JSON
+                var dados_json = {};
+                $.each(dados, function () {
+                    dados_json[this.name] = this.value;
+                });
+                console.log(dados_json);
+
+                // Envia a requisição POST com o cabeçalho Content-Type: application/json
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dados_json),
+                    success: function (resultado) {
+                        // Processa a resposta da requisição
+                        console.log(resultado);
+                        alert('Usuário cadastrado com sucesso!');
+                        setTimeout(redirecionaTela, 1000);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Trata o erro da requisição
+                        console.error(errorThrown);
+                        alert('Ocorreu um erro ao cadastrar o usuário.');
+                    }
+                });
+            });
+            $('#cpf').mask('000.000.000-00');
+        });
+    </script>
+</head>
+{% endblock %}
+{% block content %}
+
+<body>
+    <div class="container">
+        <h2>Nova Matricula Turmaf</h2>
+        <form id="meu-form" action="/api/v1/cadastro-usuario" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="disciplina">Usuário:</label>
+                        <select class="form-control" id="usuario" name="usuario" required>
+                            <option value="" disabled selected>Selecione o Usuário</option>
+                            {% for usuarios in usuarios %}
+                            <option value={{usuarios.id}}>{{usuarios.nome}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="disciplina">Disciplina:</label>
+                        <select class="form-control" id="disciplina" name="disciplina" required>
+                            <option value="" disabled selected>Selecione a Disciplina</option>
+                            {% for disciplina in disciplina %}
+                            <option value={{disciplina.id}}>{{disciplina.titulo}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="equipe">Equipe:</label>
+                        <select class="form-control" id="equipe" name="equipe" required>
+                            <option value="" disabled selected>Selecione a Equipe</option>
+                            {% for equipe in equipe %}
+                            <option value={{equipe.id}}>{{equipe.apelido}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sala">Sala:</label>
+                        <select class="form-control" id="sala" name="sala" required>
+                            <option value="" disabled selected>Selecione a Sala</option>
+                            {% for sala in sala %}
+                            <option value={{sala.id}}>{{sala.numero}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+    </div>
+</body>
+{% endblock %}
+
+</html>

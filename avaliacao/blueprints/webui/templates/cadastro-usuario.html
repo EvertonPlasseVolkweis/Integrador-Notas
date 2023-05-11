@@ -99,33 +99,6 @@
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label for="equipe">Equipe:</label>
-            <select class="form-control" id="equipe" name="equipe" required>
-              <option value="" disabled selected>Selecione a Equipe</option>
-              {% for equipe in equipe %}
-              <option value={{equipe.id}}>{{equipe.apelido}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="sala">Sala:</label>
-            <select class="form-control" id="sala" name="sala" required>
-              <option value="" disabled selected>Selecione a Sala</option>
-              {% for sala in sala %}
-              <option value={{sala.id}}>{{sala.numero}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="disciplina">Disciplina:</label>
-            <select class="form-control" id="disciplina" name="disciplina" required>
-              <option value="" disabled selected>Selecione a Disciplina</option>
-              {% for disciplina in disciplina %}
-              <option value={{disciplina.id}}>{{disciplina.titulo}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
             <label for="nome">Nome:</label>
             <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
           </div>

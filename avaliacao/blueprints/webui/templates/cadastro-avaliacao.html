@@ -12,6 +12,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  {% set idUsuario = idUsuario %}
   <script>
     function redirecionaTela() {
       window.location.replace('/inserir-notas')
@@ -29,10 +30,11 @@
         $.each(dados, function () {
           dados_json[this.name] = this.value;
         });
-
+        var idUsuario = '{{ idUsuario }}';
+        console.log(idUsuario);
         // Envia a requisição POST com o cabeçalho Content-Type: application/json
         $.ajax({
-          url: url,
+          url: url + idUsuario,
           type: 'POST',
           dataType: 'json',
           contentType: 'application/json',
@@ -59,7 +61,7 @@
 <body>
   <div class="container">
     <h2>Nova Avaliação</h2>
-    <form id="meu-form" action="/api/v1/avaliacao/cadastro" method="post">
+    <form id="meu-form" action="/api/v1/avaliacao/cadastro/" method="post">
       <div class="form-group">
         <label for="descricao">Tipo de Avaliação:</label>
         <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao">
