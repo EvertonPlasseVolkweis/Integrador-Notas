@@ -114,7 +114,7 @@ def inserir_notas():
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     print(idUsuario)
-    avaliacao = Avaliacao.query.filter_by(tem_nota=False, fk_id_usuario=idUsuario).all()
+    avaliacao = Avaliacao.query.filter_by(tem_nota=False, fk_id_usuario_avaliador=idUsuario).all()
     matriz = MATRIZ_AVALIACAO
     matriz = MATRIZ_AVALIACAO
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, avaliacao=avaliacao, perfil=perfil, editando=False)
@@ -128,6 +128,8 @@ def cadastro_avaliacao():
     user = Usuario.query.filter_by(id=idUsuario).first()
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    disciplinas = Disciplina.query.all()
+    turmas = Turma.query.all()
     if grupo.grupo == "Alunos":
         consulta = text("""
             SELECT u.nome, t.fk_id_equipe, u.id
@@ -146,7 +148,7 @@ def cadastro_avaliacao():
         usuario = result
     else:
         usuario = Usuario.query.all()
-    return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo, perfil=perfil, idUsuario=idUsuario)
+    return render_template("cadastro-avaliacao.html", usuarios=usuario, grupo=grupo, perfil=perfil, disciplinas=disciplinas, turmas=turmas, idUsuario=idUsuario)
 
 
 @login_required
@@ -164,7 +166,7 @@ def tabela_avaliacao_turma(item_id):
     LEFT JOIN sala s ON s.id IN (t.fk_id_sala)
     LEFT JOIN disciplina d ON d.id IN (t.fk_id_disciplina)
     LEFT JOIN equipe e ON e.id IN (t.fk_id_equipe)
-    WHERE u.id = :idUsuario""")
+    WHERE u.id = :idUsuario AND a.tem_nota = 1""")
     parametros = {'idUsuario': item_id}
     execute = db.session.execute(consulta, parametros)
     result = execute.fetchall()
@@ -258,6 +260,21 @@ def edita_avaliacao(item_id):
 
 
 @login_required
+@admin_required
+def edita_usuario(item_id):
+    verify_jwt_in_request()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    grupos = Grupo.query.all()
+    perfis = Perfil.query.all()
+    matriz = MATRIZ_AVALIACAO
+    usuario = Usuario.query.filter_by(id=item_id).first()
+    return render_template("cadastro-usuario.html", grupos=grupos, perfis=perfis, usuario=usuario, matriz_avaliacao=matriz, grupo=grupo, visualizando=False, editando=True, perfil=perfil, idUsuario=item_id)
+
+
+@login_required
 def visualiza_usuarios():
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
@@ -273,17 +290,54 @@ def visualiza_usuarios():
 
 
 @login_required
-def visualiza_boletim(item_nome):
+def visualiza_turmas(item_id):
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-    usuario = Usuario.query.filter_by(nome=item_nome).first()
-    consulta = text("select av.titulo, av.descricao, av.tipo_avaliacao, JSON_GROUP_ARRAY(json_object('titulo', ha.titulo, 'nota', na.valor, 'fator_peso', ha.fator_peso)) AS notas from avaliacao av left join nota_avalia na on na.fk_id_avaliacao = av.id  left join habilidade_atitude ha on ha.id = na.fk_id_habilidade_atitude left join usuario us on us.id = av.fk_id_usuario left join grupo g on g.id = us.fk_id_grupo where av.fk_id_usuario = :idUsuario group by av.id")
-    consulta2 = text("SELECT SUM(total_porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, SUM(porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, habilidade_titulo, nota_percentual, CASE WHEN tipo_avaliacao = 'aluno' THEN nota_percentual * 0.8 WHEN tipo_avaliacao = 'colega' THEN nota_percentual * 0.1 WHEN tipo_avaliacao = 'auto' THEN nota_percentual * 0.1 ELSE nota_percentual END AS porcentagem_nota FROM (SELECT CASE WHEN ha.titulo IN ('Unidades de Aprendizagem (Uas)', 'Entrega', 'Avaliação objetiva', 'Avaliação dissertativa') THEN 'conhecimento' ELSE av.tipo_avaliacao END AS tipo_avaliacao, ha.titulo AS habilidade_titulo, (SUM(summed_na.valor_total) / COUNT(DISTINCT av.id)) * ha.fator_peso AS nota_percentual, ha.fator_peso FROM avaliacao av LEFT JOIN (SELECT fk_id_avaliacao, fk_id_habilidade_atitude, SUM(valor) AS valor_total FROM nota_avalia GROUP BY fk_id_avaliacao, fk_id_habilidade_atitude) summed_na ON summed_na.fk_id_avaliacao = av.id LEFT JOIN habilidade_atitude ha ON ha.id = summed_na.fk_id_habilidade_atitude LEFT JOIN usuario us ON us.id = av.fk_id_usuario LEFT JOIN grupo g ON g.id = us.fk_id_grupo WHERE av.fk_id_usuario = :idUsuario GROUP BY tipo_avaliacao, ha.titulo) subquery) subquery_porcentagem GROUP BY tipo_avaliacao) subquery_total")
-    parametros = {'idUsuario': usuario.id}
+    consulta = text("""
+    SELECT u.id, u.nome, s.numero, d.titulo, e.apelido, t.id as id_turma
+    FROM turma t
+    LEFT JOIN usuario u ON u.id IN (t.fk_id_usuario)
+    LEFT JOIN sala s ON s.id IN (t.fk_id_sala)
+    LEFT JOIN disciplina d ON d.id IN (t.fk_id_disciplina)
+    LEFT JOIN equipe e ON e.id IN (t.fk_id_equipe)
+    WHERE u.id = :idUsuario
+    """)
+    parametros = {'idUsuario': item_id}
     execute = db.session.execute(consulta, parametros)
-    execute2 = db.session.execute(consulta2, parametros)
+    result = execute.fetchall()
+    if not result:  # Verifica se result é uma lista vazia
+        flash("Usuário não está matriculado em nenhuma disciplina.", "error")
+        return jsonify({"error": True})
+    else:
+        return render_template("turmas.html", turmas=result, perfil=perfil)
+
+
+@login_required
+def visualiza_boletim(item_nome, id_turma):
+    verify_jwt_in_request()
+    print(id_turma)
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    usuario = Usuario.query.filter_by(nome=item_nome).first()
+    consulta = text("""
+    SELECT av.titulo, av.descricao, av.tipo_avaliacao, 
+    JSON_GROUP_ARRAY(json_object('titulo', ha.titulo, 'nota', na.valor, 'fator_peso', ha.fator_peso)) AS notas 
+    FROM avaliacao av 
+    LEFT JOIN nota_avalia na ON na.fk_id_avaliacao = av.id  
+    LEFT JOIN habilidade_atitude ha ON ha.id = na.fk_id_habilidade_atitude 
+    LEFT JOIN usuario us ON us.id = av.fk_id_usuario 
+    LEFT JOIN grupo g ON g.id = us.fk_id_grupo 
+    WHERE av.fk_id_usuario = :idUsuario AND av.tem_nota = 1
+    GROUP BY av.id 
+    """)
+    consulta2 = text("SELECT SUM(total_porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, SUM(porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, habilidade_titulo, nota_percentual, CASE WHEN tipo_avaliacao = 'aluno' THEN nota_percentual * 0.8 WHEN tipo_avaliacao = 'colega' THEN nota_percentual * 0.1 WHEN tipo_avaliacao = 'auto' THEN nota_percentual * 0.1 ELSE nota_percentual END AS porcentagem_nota FROM (SELECT CASE WHEN ha.titulo IN ('Unidades de Aprendizagem (Uas)', 'Entrega', 'Avaliação objetiva', 'Avaliação dissertativa') THEN 'conhecimento' ELSE av.tipo_avaliacao END AS tipo_avaliacao, ha.titulo AS habilidade_titulo, (SUM(summed_na.valor_total) / COUNT(DISTINCT av.id)) * ha.fator_peso AS nota_percentual, ha.fator_peso FROM avaliacao av LEFT JOIN (SELECT fk_id_avaliacao, fk_id_habilidade_atitude, SUM(valor) AS valor_total FROM nota_avalia GROUP BY fk_id_avaliacao, fk_id_habilidade_atitude) summed_na ON summed_na.fk_id_avaliacao = av.id LEFT JOIN habilidade_atitude ha ON ha.id = summed_na.fk_id_habilidade_atitude LEFT JOIN usuario us ON us.id = av.fk_id_usuario LEFT JOIN grupo g ON g.id = us.fk_id_grupo WHERE av.fk_id_usuario = :idUsuario and av.fk_id_turma = :idTurma GROUP BY tipo_avaliacao, ha.titulo) subquery) subquery_porcentagem GROUP BY tipo_avaliacao) subquery_total")
+    parametros = {'idUsuario': usuario.id}
+    parametros2 = {'idUsuario': usuario.id, 'idTurma': id_turma}
+    execute = db.session.execute(consulta, parametros)
+    execute2 = db.session.execute(consulta2, parametros2)
     result = execute.fetchall()
     result2 = execute2.fetchall()
     if not result:  # Verifica se result2 é uma lista vazia
@@ -309,8 +363,7 @@ def visualiza_boletim(item_nome):
                 aval_dict = json.loads(avaliacao[3])
 
                 # Calcula a média da avaliação
-                media = sum([a['nota'] * a['fator_peso'] for a in aval_dict]
-                            ) / sum([a['fator_peso'] for a in aval_dict])
+                media = sum([a.get('nota', 0) * a.get('fator_peso', 0) for a in aval_dict if a.get('nota') is not None and a.get('fator_peso') is not None]) / sum([a.get('fator_peso', 0) for a in aval_dict if a.get('fator_peso') is not None])
 
                 # Armazena a média no dicionário medias
                 medias[avaliacao[0]] = media

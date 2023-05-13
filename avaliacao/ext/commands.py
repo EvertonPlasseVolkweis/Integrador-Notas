@@ -38,16 +38,18 @@ def insert_grupo():
     db.session.commit()
 
 def insert_perfil():
-    perfil_professor = Perfil(perfil='cadastro_provas')
-    perfil_aluno = Perfil(perfil='cadastro_avaliacao')
+    perfil_admin = Perfil(perfil='admin')
+    perfil_professor = Perfil(perfil='professor')
+    perfil_aluno = Perfil(perfil='aluno')
+    db.session.add(perfil_admin)
     db.session.add(perfil_professor)
     db.session.add(perfil_aluno)
     db.session.commit()
 
 def insert_usuario():
     data_cadastro = datetime(2022, 3, 12)
-    usuario_profesoor = Usuario(cpf='12345678900', login='Professor Linguiça', email='usuario@professor.com', senha='12345678', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=data_cadastro, nome='Professor Linguiça', ra=111111)
-    usuario_aluno = Usuario(cpf='11111111100', login='Lincola', email='usuario@aluno.com', senha='12345678', fk_id_grupo=2, fk_id_perfil=2, data_cadastro=data_cadastro, nome='Lincola', ra=222222)
+    usuario_profesoor = Usuario(cpf='12345678900', login='Professor Linguiça', email='a@a', senha='123123', fk_id_grupo=1, fk_id_perfil=1, data_cadastro=data_cadastro, nome='Professor Linguiça', ra=111111)
+    usuario_aluno = Usuario(cpf='11111111100', login='Lincola', email='l@l', senha='123123', fk_id_grupo=2, fk_id_perfil=3, data_cadastro=data_cadastro, nome='Lincola', ra=222222)
     db.session.add(usuario_profesoor)
     db.session.add(usuario_aluno)
     db.session.commit()

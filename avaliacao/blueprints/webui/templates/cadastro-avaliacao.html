@@ -32,6 +32,7 @@
         });
         var idUsuario = '{{ idUsuario }}';
         console.log(idUsuario);
+        console.log(dados_json);
         // Envia a requisição POST com o cabeçalho Content-Type: application/json
         $.ajax({
           url: url + idUsuario,
@@ -54,10 +55,28 @@
         });
       });
     });
+    $(document).ready(function () {
+      $("#turmas").prop("disabled", true);
+      $("#usuarios").change(function () {
+        var usuarioId = $(this).val();
+        if (usuarioId) {
+          $("#turmas").prop("disabled", false);
+          $("#turmas option").each(function () {
+            $(this).show();
+            if ($(this).data('usuario-id') != usuarioId) {
+              $(this).hide();
+            }
+          });
+        } else {
+          $("#turmas").prop("disabled", true);
+        }
+      });
+    });
   </script>
 </head>
 {% endblock %}
 {% block content %}
+
 <body>
   <div class="container">
     <h2>Nova Avaliação</h2>
@@ -83,11 +102,24 @@
           name="descricao"></textarea>
       </div>
       <div class="form-group">
-        <label for="usuarios">Usuários:</label>
+        <label for="usuarios">Aluno Avaliado:</label>
         <select class="form-control" id="usuarios" name="usuario">
           <option value="" disabled selected>Selecione um Usuário</option>
           {% for usuario in usuarios %}
           <option value="{{usuario.id}}">{{usuario.nome}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="turmas">Turmas:</label>
+        <select class="form-control" id="turmas" name="turma">
+          <option value="" disabled selected>Selecione a Turma</option>
+          {% for turma in turmas %}
+          {% for disciplina in disciplinas %}
+          {% if disciplina.id == turma.fk_id_disciplina %}
+          <option value="{{ turma.id }}" data-usuario-id="{{ turma.fk_id_usuario }}">{{ disciplina.titulo }}</option>
+          {% endif %}
+          {% endfor %}
           {% endfor %}
         </select>
       </div>

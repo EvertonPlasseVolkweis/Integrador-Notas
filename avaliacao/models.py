@@ -49,7 +49,11 @@ class Avaliacao(db.Model):
     data_fim = db.Column(db.Integer, nullable=False)
     tem_nota = db.Column(db.Boolean, nullable=False, default=False)
     fk_id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'))
-    usuario = db.relationship('Usuario', backref='avaliacoes')
+    usuario = db.relationship('Usuario', foreign_keys=[fk_id_usuario], backref='avaliacoes')
+    fk_id_usuario_avaliador = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+    usuario_avaliador = db.relationship('Usuario', foreign_keys=[fk_id_usuario_avaliador])
+    fk_id_turma = db.Column(db.Integer, db.ForeignKey('turma.id'))
+    turma = db.relationship('Turma', foreign_keys=[fk_id_turma], backref='avaliacoes')
 
 class HabilidadeAtitude(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,4 +81,4 @@ class Turma(db.Model):
     sala = db.relationship('Sala', backref='turmas')
     disciplina = db.relationship('Disciplina', backref='turmas')
     equipe = db.relationship('Equipe', backref='turmas')
-    avaliacao = db.relationship('Avaliacao', backref='turmas')
+    avaliacao = db.relationship('Avaliacao', foreign_keys=[fk_id_avaliacao], backref='turmas')
