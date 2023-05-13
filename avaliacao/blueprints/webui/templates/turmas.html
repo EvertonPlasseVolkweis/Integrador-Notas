@@ -40,30 +40,18 @@
                 });
             }
         });
-        function turmas(item_id) {
+
+        function visualizarBoletim(nome, idTurma) {
+            console.log(idTurma)
             $.ajax({
-                url: "/turmas/" + item_id,
-                method: "GET",
-                success: function (response) {
-                    if (response.error) {
-                        console.log('asdasd');
-                        toastr.error("Usuário não está matriculado em nenhuma disciplina.");
-                    } else {
-                        window.location.replace("/turmas/" + item_id);
-                    }
-                }
-            });
-        }
-        function visualizarBoletim(nome) {
-            $.ajax({
-                url: "/boletim/" + nome,
+                url: "/boletim/" + nome + "/" + idTurma,
                 method: "GET",
                 success: function (response) {
                     if (response.error) {
                         console.log('asdasd');
                         toastr.error("Não há avaliações disponíveis para este usuário.");
                     } else {
-                        window.location.replace("/boletim/" + nome);
+                        window.location.replace("/boletim/" + nome + "/" + idTurma);
                     }
                 }
             });
@@ -82,22 +70,8 @@
                 }
             });
         }
-        function editarUsuario(id) {
-            $.ajax({
-                url: "/usuario-editar/" + id,
-                method: "GET",
-                success: function (response) {
-                    if (response.error) {
-                        console.log('asdasd');
-                        toastr.error("Não há avaliações disponíveis para este usuário.");
-                    } else {
-                        window.location.replace("/tabela-avaliacao-turma/" + id);
-                    }
-                }
-            });
-        }
         function voltar() {
-            window.location.replace("/");
+            window.location.replace("/usuarios");
         }
     </script>
 </head>
@@ -106,36 +80,32 @@
 
 <body>
     <div class="container">
-        <h1>Tabela Aluno</h1>
+        <h1>Disciplinas Aluno</h1>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Nome</th>
-                    <th>RA</th>
-                    <th>CPF</th>
+                    <th>Disciplina</th>
+                    <th>Sala</th>
+                    <th>Equipe</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in usuarios %}
+                {% for item in turmas %}
                 <tr>
-                    <td>{{ item.nome }}</td>
-                    <td>{{ item.ra }}</td>
-                    <td>{{ item.cpf }}</td>
+                    <td>{{ item.titulo }}</td>
+                    <td>{{ item.numero }}</td>
+                    <td>{{ item.apelido }}</td>
                     <td>
+                        <button type="submit" class="btn btn-primary" data-nome="{{ item.nome }}"
+                            data-idturma="{{ item.id_turma }}" data-toggle="tooltip" data-placement="top" title="Boletim"
+                            onclick="visualizarBoletim(this.getAttribute('data-nome'), this.getAttribute('data-idturma'))">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </button>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
-                            data-placement="top" title="Disciplinas" onclick="turmas(this.getAttribute('data-id'))"><i
-                                class="bi bi-journal-text"></i></button>
-                        <!-- <button type="submit" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Avaliações"
                             onclick="buscaAvaliacoes(this.getAttribute('data-id'))"><i
-                                class="bi bi-layout-text-sidebar-reverse"></i></button> -->
-                        {% if perfil.perfil == "admin" or perfil.perfil == "professor" %}
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
-                        data-placement="top" title="Editar"
-                        onclick="window.location.replace('/edita-usuario/' + this.getAttribute('data-id'))"><i
-                            class="bi bi-pencil"></i></button>
-                        {% endif %}  
+                                class="bi bi-layout-text-sidebar-reverse"></i></button>
                     </td>
                 </tr>
                 {% endfor %}

@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from datetime import datetime
 from flask import abort, jsonify, make_response, redirect, render_template, request, url_for
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, reqparse
 from avaliacao.ext.database import db
 from sqlalchemy.orm.exc import NoResultFound
@@ -18,18 +18,20 @@ class UsuariosResource(Resource):
             {"usuario": [usuario.to_dict() for usuario in usuarios]}
         )
 
-
 class CadastroAvaliacaoResource(Resource):
     # modelo post
     def post(self, idUsuario):
         dados = request.get_json()
+        print(idUsuario)
+        print(idUsuario)
         print(idUsuario)
         # Verifica se já existe uma avaliação com o mesmo título
         existing_avaliacao = Avaliacao.query.filter_by(titulo=dados['avaliacao']).first()
         if existing_avaliacao:
             abort(409, "Avaliação já existente com o mesmo título.")
         novaAvaliacao = Avaliacao(
-            titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0, fk_id_usuario=idUsuario)
+            titulo=dados['avaliacao'], descricao=dados['descricao'], tipo_avaliacao=dados['tipo_avaliacao'], data_inicio=0, data_fim=0,
+            fk_id_usuario=dados['usuario'], fk_id_usuario_avaliador=idUsuario, fk_id_turma=dados['turma'])
         db.session.add(novaAvaliacao)
         db.session.commit()
         avaliacaoSaved = Avaliacao.query.filter_by(
@@ -59,7 +61,7 @@ class NotaAvaliaResource(Resource):
                 if valor != '':
                     nota_avalia = NotaAvalia(
                     fk_id_avaliacao=idAvaliacao, fk_id_habilidade_atitude=habilidade_atitude.id, comentario='', valor=valor)
-                db.session.add(nota_avalia)
+                    db.session.add(nota_avalia)
         avaliacao = Avaliacao.query.filter_by(id=idAvaliacao).first() or abort(
             404, "Avaliação não encontrada"
         )
@@ -135,11 +137,22 @@ class CadastroUsuario(Resource):
                           fk_id_perfil=fk_id_perfil, data_cadastro=datetime.utcnow(), nome=nome, ra=ra)
         db.session.add(usuario)
         db.session.commit()
-        nova_turma = Turma(fk_id_usuario=usuario.id,
-                           fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina'], fk_id_equipe=dados['equipe'], fk_id_avaliacao=0)
+        response = make_response({"message": "Usuario salvo"}, 200)
+        return response
+    
+
+
+class CadastroTurma(Resource):
+    def post(self):
+        dados = request.get_json()
+        print(dados)
+        turma_existente = Turma.query.filter_by(fk_id_usuario=dados['usuario'], fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina']).first()
+        if turma_existente:
+            return {"message": "Usuario já matriculado na disciplina"}, 400
+        nova_turma = Turma(fk_id_usuario=dados['usuario'], fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina'], fk_id_equipe=dados['equipe'], fk_id_avaliacao=0)
         db.session.add(nova_turma)
         db.session.commit()
-        response = make_response({"message": "Usuario salvo"}, 200)
+        response = make_response({"message": "Turma salva"}, 200)
         return response
     
 
@@ -163,6 +176,38 @@ class EditAvaliacao(Resource):
         
         db.session.commit()
         response = make_response({"message": "Notas editadas com sucesso"}, 200)
+        return response
+    
+
+    
+class EditUsuario(Resource):
+    def put(self, idUsuario):
+        data = request.get_json()
+        usuario = Usuario.query.filter_by(id=idUsuario).first()
+        
+        if not usuario:
+            return {"message": "Usuário não encontrado"}, 404
+        
+        if 'cpf' in data:
+            usuario.cpf = data['cpf']
+        if 'login' in data:
+            usuario.login = data['login']
+        if 'email' in data:
+            usuario.email = data['email']
+        if 'senha' in data:
+            usuario.senha = data['senha']
+        if 'fk_id_grupo' in data:
+            usuario.fk_id_grupo = data['fk_id_grupo']
+        if 'fk_id_perfil' in data:
+            usuario.fk_id_perfil = data['fk_id_perfil']
+        if 'nome' in data:
+            usuario.nome = data['nome']
+        if 'ra' in data:
+            usuario.ra = data['ra']
+        
+        db.session.commit()
+        
+        response = make_response({"message": "Usuário editado com sucesso"}, 200)
         return response
 
 

@@ -11,6 +11,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  {% set editando_js = "true" if editando else "false" %}
   <script>
     function redirecionaTela() {
       window.location.replace('/')
@@ -21,7 +22,7 @@
 
         var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
         var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
-
+        var editando = '{{ editando_js }}' === 'true';
         // Converte os dados para um objeto JSON
         var dados_json = {};
         $.each(dados, function () {
@@ -32,7 +33,7 @@
         // Envia a requisição POST com o cabeçalho Content-Type: application/json
         $.ajax({
           url: url,
-          type: 'POST',
+          type: editando ? 'PUT' : 'POST',
           dataType: 'json',
           contentType: 'application/json',
           data: JSON.stringify(dados_json),
@@ -58,32 +59,58 @@
 
 <body>
   <div class="container">
-    <h2>Novo Usuário</h2>
-    <form id="meu-form" action="/api/v1/cadastro-usuario" method="post">
+    {% if editando %}
+    <h2>Editando Usuário</h2>
+    {% else %}
+    <h2>Criando Usuário</h2>
+    {% endif %}
+    <form id="meu-form"
+      action="{{ '/api/v1/usuario/editar/' + (idUsuario|string) if editando else '/api/v1/cadastro-usuario' }}"
+      method="post">
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
             <label for="cpf">CPF:</label>
-            <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite o CPF" required>
-          </div>    
+            <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite o CPF" required {% if
+              editando %}value="{{ usuario.cpf }}" {% endif %}>
+          </div>
           <div class="form-group">
-            <label for="login">Login:</label>
-            <input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" required>
+            <label for="nome">Nome:</label>
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required {% if
+              editando %}value="{{ usuario.nome }}" {% endif %}>
           </div>
           <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Digite o email" required>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Digite o email" required {% if
+              editando %}value="{{ usuario.email }}" {% endif %}>
+          </div>
+          <div class="form-group">
+            <label for="ra">RA:</label>
+            <input type="text" class="form-control" id="ra" name="ra" placeholder="Digite o RA" required {% if editando
+              %}value="{{ usuario.ra }}" {% endif %}>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="login">Login:</label>
+            <input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" required {% if
+              editando %}value="{{ usuario.login }}" {% endif %}>
           </div>
           <div class="form-group">
             <label for="senha">Senha:</label>
-            <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha" required>
+            <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha" required {%
+              if editando %}value="{{ usuario.senha }}" {% endif %}>
           </div>
           <div class="form-group">
             <label for="grupo">Grupo:</label>
             <select class="form-control" id="grupo" name="grupo" required>
               <option value="" disabled selected>Selecione o Grupo</option>
               {% for grupo in grupos %}
-              <option value={{grupo.id}}>{{grupo.grupo}}</option>
+              {% if editando and grupo.id == usuario.fk_id_grupo %}
+              <option value="{{ grupo.id }}" selected>{{ grupo.grupo }}</option>
+              {% else %}
+              <option value="{{ grupo.id }}">{{ grupo.grupo }}</option>
+              {% endif %}
               {% endfor %}
             </select>
           </div>
@@ -92,19 +119,13 @@
             <select class="form-control" id="perfil" name="perfil" required>
               <option value="" disabled selected>Selecione o Perfil</option>
               {% for perfil in perfis %}
-              <option value={{perfil.id}}>{{perfil.perfil}}</option>
+              {% if editando and perfil.id == usuario.fk_id_perfil %}
+              <option value="{{ perfil.id }}" selected>{{ perfil.perfil }}</option>
+              {% else %}
+              <option value="{{ perfil.id }}">{{ perfil.perfil }}</option>
+              {% endif %}
               {% endfor %}
             </select>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="nome">Nome:</label>
-            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
-          </div>
-          <div class="form-group">
-            <label for="ra">RA:</label>
-            <input type="text" class="form-control" id="ra" name="ra" placeholder="Digite o RA" required>
           </div>
         </div>
       </div>
