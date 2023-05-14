@@ -137,15 +137,14 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         {% if perfil.perfil == "aluno" or perfil.perfil == "professor" or perfil.perfil == "admin"%}
                         <a class="dropdown-item" href="/cadastrar-avaliacao">Cadastrar Avaliação</a>
-                        {% endif %}
-                        {% if perfil.perfil == "admin" %}
                         <a class="dropdown-item" href="/cadastro-usuario">Cadastrar Usuário</a>
+                        <a class="dropdown-item" href="/inserir-notas">Cadastrar Notas</a>
+                        <a class="dropdown-item" href="/tabela-sala">Cadastrar Sala</a>
+                        <a class="dropdown-item" href="/tabela-disciplina">Cadastrar Disciplina</a>
+                        <a class="dropdown-item" href="/tabela-equipe">Cadastrar Equipe</a>
                         {% endif %}
                         {% if perfil.perfil == "admin" %}
                         <a class="dropdown-item" href="/cadastro-turma">Cadastrar Turma</a>
-                        {% endif %}
-                        {% if perfil.perfil == "aluno" or perfil.perfil == "professor" or perfil.perfil == "admin"%}
-                        <a class="dropdown-item" href="/inserir-notas">Cadastrar Notas</a>
                         {% endif %}
                     </div>
                 </li>

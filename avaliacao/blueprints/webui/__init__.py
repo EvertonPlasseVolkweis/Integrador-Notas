@@ -1,9 +1,6 @@
 from flask import Blueprint
 
-from avaliacao.blueprints.restapi.resources import EditUsuario
-
-from .views import cadastro_turma, cadastro_usuario, edita_avaliacao, edita_usuario, home, inserir_notas, cadastro_avaliacao, tabela_avaliacao_turma, visualiza_avaliacao, visualiza_media, login, visualiza_boletim, visualiza_turmas, visualiza_usuarios
-
+from .views import *
 bp = Blueprint("webui", __name__, template_folder="templates")
 
 ## inicialização para rotas de tela: html
@@ -21,6 +18,18 @@ bp.add_url_rule('/edita-usuario/<int:item_id>', view_func=edita_usuario)
 bp.add_url_rule('/cadastro-usuario', view_func=cadastro_usuario)
 bp.add_url_rule('/boletim/<string:item_nome>/<int:id_turma>', view_func=visualiza_boletim)
 bp.add_url_rule('/usuarios', view_func=visualiza_usuarios)
+bp.add_url_rule('/tabela-disciplina', view_func=disciplinaView)
+bp.add_url_rule('/form-disciplina', view_func=formDisciplinaView)
+bp.add_url_rule('/edita-disciplina/<int:id>', view_func=edita_disciplina)
+bp.add_url_rule('/visualiza-disciplina/<int:id>', view_func=visualiza_disciplina)
+bp.add_url_rule('/tabela-equipe', view_func=equipeView)
+bp.add_url_rule('/form-equipe', view_func=formEquipeView)
+bp.add_url_rule('/edita-equipe/<int:id>', view_func=edita_equipe)
+bp.add_url_rule('/visualiza-equipe/<int:id>', view_func=visualiza_equipe)
+bp.add_url_rule('/tabela-sala', view_func=salaView)
+bp.add_url_rule('/form-sala', view_func=formSalaView)
+bp.add_url_rule('/edita-sala/<int:id>', view_func=edita_sala)
+bp.add_url_rule('/visualiza-sala/<int:id>', view_func=visualiza_sala)
 bp.add_url_rule('/turmas/<int:item_id>', view_func=visualiza_turmas)
 
 def init_app(app):

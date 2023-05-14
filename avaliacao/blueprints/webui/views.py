@@ -277,6 +277,54 @@ def edita_avaliacao(item_id):
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, avaliacaoId=item_id)
 
+@login_required
+def edita_disciplina(id):
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    disciplina = Disciplina.query.filter_by(id=id).first()
+    return render_template("form-disciplina.html", visualizando=False, editando=True, dados=disciplina, id=disciplina.id, perfil=perfil)
+
+@login_required
+def visualiza_disciplina(id):
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    disciplina = Disciplina.query.filter_by(id=id).first()
+    return render_template("form-disciplina.html", visualizando=True, editando=False, dados=disciplina, perfil=perfil)
+
+@login_required
+def edita_equipe(id):
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    equipe = Equipe.query.filter_by(id=id).first()
+    return render_template("form-equipe.html", visualizando=False, editando=True, dados=equipe, perfil=perfil)
+
+@login_required
+def visualiza_equipe(id):
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    equipe = Equipe.query.filter_by(id=id).first()
+    return render_template("form-equipe.html", visualizando=True, editando=False, dados=equipe, perfil=perfil)
+
+@login_required
+def edita_sala(id):
+    sala = Sala.query.filter_by(id=id).first()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("form-sala.html", visualizando=False, editando=True, dados=sala, perfil=perfil)
+
+@login_required
+def visualiza_sala(id):
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    sala = Sala.query.filter_by(id=id).first()
+    return render_template("form-sala.html", visualizando=True, editando=False, dados=sala, perfil=perfil)
+
 
 @login_required
 @admin_required
@@ -400,3 +448,51 @@ def visualiza_boletim(item_nome, id_turma):
                 media_final = avaliacao[0]
 
             return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil, nomeUsuario=nomeUsuario)
+        
+@login_required
+def disciplinaView():
+    verify_jwt_in_request()
+    disciplina = Disciplina.query.all()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("tabela-disciplina.html", disciplina=disciplina, perfil=perfil)
+
+@login_required
+def formDisciplinaView():
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("form-disciplina.html", perfil=perfil)
+
+@login_required
+def equipeView():
+    verify_jwt_in_request()
+    equipe = Equipe.query.all()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("tabela-equipe.html", equipe=equipe, perfil=perfil)
+
+@login_required
+def formEquipeView():
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("form-equipe.html", perfil=perfil)
+
+@login_required
+def salaView():
+    verify_jwt_in_request()
+    sala = Sala.query.all()
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("tabela-sala.html", sala=sala, perfil=perfil)
+
+@login_required
+def formSalaView():
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    return render_template("form-sala.html", perfil=perfil)
