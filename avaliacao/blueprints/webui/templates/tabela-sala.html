@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+<html>
+{% block head %}
+
+<head>
+    <title>{% block title %}Tabela Sala{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+
+        .box {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .voltar {
+            justify-content: space-between;
+        }
+
+        .media {
+            justify-content: space-between;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            text-align: left;
+            margin: 0;
+        }
+
+        .header button {
+            text-align: right;
+        }
+    </style>
+</head>
+{% endblock %}
+{% block content %}
+
+<body>
+    {% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        // deleta
+        function deleta(id) {
+            console.log(id)
+            if (confirm('Deseja realmente deletar essa sala?')) {
+                $.ajax({
+                    url: '/api/v1/sala/' + id,
+                    type: 'DELETE',
+                    success: function (response) {
+                        toastr.success(response.message);
+                        location.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        toastr.error("Erro ao deletar: " + errorThrown);
+                    }
+                });
+            }
+        }
+    </script>
+    {% endblock %}
+    <div class="container">
+        <div class="header">
+            <h1>Tabela Sala</h1>
+            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Cadastrar"  onclick="window.location.replace('/form-sala')">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Turno</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in sala %}
+                <tr>
+                    <td>{{ item.numero }}</td>
+                    <td>{{ item.turno }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Visualizar"
+                            onclick="window.location.replace('/visualiza-sala/' + this.getAttribute('data-id'))">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Editar"
+                            onclick="window.location.replace('/edita-sala/' + this.getAttribute('data-id'))">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Excluir" onclick="deleta(this.getAttribute('data-id'))">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="box">
+            <div class="voltar">
+                <button type="submit" class="btn btn-primary" onclick="voltar()" data-toggle="tooltip"
+                    data-placement="top" title="Voltar">
+                    <i class="bi bi-arrow-return-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
+</html>

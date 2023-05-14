@@ -5,8 +5,8 @@ from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, reqparse
 from avaliacao.ext.database import db
 from sqlalchemy.orm.exc import NoResultFound
-
-from avaliacao.models import HabilidadeAtitude, NotaAvalia, Usuario, Avaliacao, Turma, Usuario
+from flask import abort
+from avaliacao.models import *
 
 
 class UsuariosResource(Resource):
@@ -85,8 +85,6 @@ class BuscarAvaliacaoResource(Resource):
             {"avaliacao": [result.to_dict() for result in result]}
         )
 
-
-from flask import abort
 
 class BuscarUsuario(Resource):
     def __init__(self):
@@ -228,3 +226,125 @@ class DeleteAvaliacao(Resource):
         db.session.commit()
         
         return make_response({"message": "Avaliação e notas deletadas com sucesso"}, 200)
+    
+class GetDisciplina(Resource):
+    def get(self):
+        # modelo de get
+        disciplinas = Disciplina.query.all() or abort(204)
+        ##
+        return jsonify(
+            {"disciplinas": [disciplina.to_dict() for disciplina in disciplinas]}
+        )
+    
+class SalvaDisciplina(Resource):
+    def post(self):
+        dados = request.get_json()
+        disciplina = Disciplina(titulo=dados['titulo'], ementa=dados['ementa'])
+        db.session.add(disciplina)
+        db.session.commit()
+        return make_response({"message": "Disciplina salva com sucesso!"}, 200)
+    
+class AtualizaDisciplina(Resource):
+    def put(self, disciplinaId):
+        dados = request.get_json()
+        disciplina = Disciplina.query.filter_by(id=disciplinaId).all()
+
+        print(dados)
+
+        disciplina.titulo = dados['titulo']
+        disciplina.ementa = dados['ementa']
+
+        db.session.commit()
+        return make_response({"message": "Disciplina editada com sucesso!"}, 200)
+    
+class DeleteDisciplina(Resource):
+    def delete(self, disciplinaId):
+        disciplina = Disciplina.query.filter_by(id=disciplinaId).all()
+
+        if disciplina is None:
+            return make_response({"message": "Disciplina não encontrada"}, 404)
+        
+        db.session.delete(disciplina)
+        db.session.commit()
+
+        return make_response({"message": "Disciplina deletada com sucesso!"}, 200)
+    
+class GetEquipe(Resource):
+    def get(self):
+        # modelo de get
+        equipes = Equipe.query.all() or abort(204)
+        ##
+        return jsonify(
+            {"equipes": [equipe.to_dict() for equipe in equipes]}
+        )
+    
+class SalvaEquipe(Resource):
+    def post(self):
+        dados = request.get_json()
+        equipe = Equipe(apelido=dados['apelido'], nome_projeto=dados['nome_projeto'])
+        db.session.add(equipe)
+        db.session.commit()
+        return make_response({"message": "Equipe salva com sucesso!"}, 200)
+    
+class AtualizaEquipe(Resource):
+    def put(self, id):
+        dados = request.get_json()
+        equipe = Equipe.query.filter_by(id=id).all()
+
+        equipe.apelido = dados['apelido']
+        equipe.nome_projeto = dados['nome_projeto']
+
+        db.session.commit()
+        return make_response({"message": "Equipe editada com sucesso!"}, 200)
+    
+class DeleteEquipe(Resource):
+    def delete(self, id):
+        equipe = Equipe.query.filter_by(id=id).all()
+
+        if equipe is None:
+            return make_response({"message": "Equipe não encontrada"}, 404)
+        
+        db.session.delete(equipe)
+        db.session.commit()
+
+        return make_response({"message": "Equipe deletada com sucesso!"}, 200)
+    
+class GetSala(Resource):
+    def get(self):
+        # modelo de get
+        salas = Sala.query.all() or abort(204)
+        ##
+        return jsonify(
+            {"salas": [sala.to_dict() for sala in salas]}
+        )
+    
+class SalvaSala(Resource):
+    def post(self):
+        dados = request.get_json()
+        sala = Sala(numero=dados['numero'], turno=dados['turno'])
+        db.session.add(sala)
+        db.session.commit()
+        return make_response({"message": "Sala salva com sucesso!"}, 200)
+    
+class AtualizaSala(Resource):
+    def put(self, id):
+        dados = request.get_json()
+        sala = Sala.query.filter_by(id=id).all()
+
+        sala.numero = dados['numero']
+        sala.turno = dados['turno']
+
+        db.session.commit()
+        return make_response({"message": "Sala editada com sucesso!"}, 200)
+    
+class DeleteSala(Resource):
+    def delete(self, id):
+        sala = Sala.query.filter_by(id=id).all()
+
+        if sala is None:
+            return make_response({"message": "Sala não encontrada"}, 404)
+        
+        db.session.delete(sala)
+        db.session.commit()
+
+        return make_response({"message": "Sala deletada com sucesso!"}, 200)

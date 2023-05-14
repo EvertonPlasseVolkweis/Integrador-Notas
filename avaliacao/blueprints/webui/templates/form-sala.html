@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+<html>
+{% block head %}
+
+<head>
+  <title>Cadastro de Sala</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  {% set editando_js = "true" if editando else "false" %}
+  <script>
+    $(function () {
+      $('#meu-form').on('submit', function (event) {
+        event.preventDefault(); // Previne o envio padrão do formulário
+
+        var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
+        var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
+        var editando = '{{ editando_js }}' === 'true'; // Pega o valor de editando do jinja
+
+        // Converte os dados para um objeto JSON
+        var dados_json = {};
+        $.each(dados, function () {
+          dados_json[this.name] = this.value;
+        });
+
+        console.log(dados_json)
+
+        // Envia a requisição POST com o cabeçalho Content-Type: application/json
+        $.ajax({
+          url: url,
+          type: editando ? 'PUT' : 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify(dados_json),
+          success: function (resultado) {
+            // Processa a resposta da requisição
+            toastr.success("Sucesso!");
+            setTimeout(window.location.reload(), 3000)
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            toastr.error(jqXHR.responseJSON.message);
+            console.error(errorThrown);
+          }
+        });
+      });
+    });
+  </script>
+</head>
+{% endblock %}
+{% block content %}
+
+<body>
+  <div class="container">
+    <h2>Nova Disciplina</h2>
+    <form id="meu-form" action="{{ '/api/v1/sala/' + (id|string) if editando else '/api/v1/sala/' }}">
+      <div class="form-group">
+        <label for="nome">Número:</label>
+        {% if visualizando == True or editando == True%}
+        <input type="text" class="form-control" name="numero" placeholder="Digite o numero"
+          value="{{dados.numero}}">
+        {% else %}
+        <input type="text" class="form-control" name="numero" placeholder="Digite o numero">
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="descricao">Turno:</label>
+        {% if visualizando == True or editando == True%}
+        <input type="text" class="form-control" name="turno" placeholder="Digite o turno"
+          value="{{dados.turno}}">
+        {% else %}
+        <input type="text" class="form-control" name="turno" placeholder="Digite o turno">
+        {% endif %}
+      </div>
+      {% if visualizando != True %}
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      {% endif %}
+    </form>
+  </div>
+</body>
+{% endblock %}
+
+</html>
