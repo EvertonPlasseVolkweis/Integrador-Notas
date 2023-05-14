@@ -59,57 +59,62 @@
     {% endblock %}
     <style>
         .container {
-            margin-top: 10vh;  
+            margin-top: 10vh;
         }
 
-        body{
+        body {
             background-color: #273C4E;
         }
-        h1{
-            color: white;
-        }
-        h2{
+
+        h1 {
             color: white;
         }
 
-        h3{
+        h2 {
             color: white;
         }
 
-        p{
+        h3 {
             color: white;
         }
 
-        label{
+        p {
             color: white;
         }
 
-        .navbar-light .navbar-brand{
-            color:white
+        label {
+            color: white;
         }
 
-        .navbar-light .navbar-nav .nav-link{
+        .navbar-light .navbar-brand {
+            color: white
+        }
+
+        .navbar-light .navbar-nav .nav-link {
             color: white;
         }
-        .navbar-light .navbar-nav .nav-link:hover{
+
+        .navbar-light .navbar-nav .nav-link:hover {
             color: white;
         }
-        .table thead th{
+
+        .table thead th {
             background-color: 273C4E;
         }
 
-        .table td{
+        .table td {
             background-color: 273C4E;
         }
-        .table{
+
+        .table {
             color: white;
         }
 
-        .bg-secondary{
-            background-color: 182530!important;
+        .bg-secondary {
+            background-color: 182530 !important;
         }
 
-        .btn-secondary{
+        .btn-secondary {
             background-color: 182530;
         }
     </style>
@@ -151,7 +156,12 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
                         <!-- <a class="dropdown-item" href="/tabela-avaliacao-turma">Tabela Avaliações</a> -->
+                        {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
                         <a class="dropdown-item" href="/usuarios">Usuários</a>
+                        {% endif %}
+                        {% if perfil.perfil == "aluno"%}
+                        <a class="dropdown-item" href="/usuarios">Boletim</a>
+                        {% endif %}
                     </div>
                 </li>
             </ul>
