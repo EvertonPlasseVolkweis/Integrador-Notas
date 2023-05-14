@@ -5,6 +5,8 @@
 <head>
     <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -27,6 +29,22 @@
         .media {
             justify-content: space-between;
         }
+
+        /* Alterar cor do texto para preto */
+        body.print-view {
+            color: black;
+        }
+
+        /* Esconder os botões de voltar e imprimir */
+        body.print-view .voltar,
+        body.print-view .imprimir {
+            display: none;
+        }
+
+        /* Cor preta para todos os elementos dentro do body */
+        body.print-view * {
+            color: black;
+        }
     </style>
 </head>
 {% endblock %}
@@ -35,9 +53,47 @@
 <body>
     {% block scripts %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    {% set nomeUser = nomeUsuario %}
     <script>
         function voltar() {
-            window.location.replace("/usuarios");
+            const teste = localStorage.getItem('turmas')
+            window.location.replace('/turmas/' + teste);
+        }
+        function imprimir() {
+            // Adicionar a classe print-view ao body
+            document.body.classList.add('print-view');
+            var nomeUsuario = '{{ nomeUser }}';
+            console.log(nomeUsuario);
+            var domElement = document.getElementsByClassName('container');
+            console.log(domElement);
+            html2canvas(domElement, { scale: 2 }).then(function (canvas) {
+                var imgData = canvas.toDataURL('image/png');
+                var pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+                pdf.addImage(imgData, 'PNG', 0, 0, 210, 0);
+                pdf.save(`Boletim ${nomeUsuario}.pdf`);
+                // Remover a classe print-view após a geração do PDF
+                document.body.classList.remove('print-view');
+            });
+        }
+        function redirecionaTelahHome() {
+            window.location.replace('/');
+        }
+        function logout() {
+            $.ajax({
+                url: '/api/v1/logout',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: '',
+                success: function (resultado) {
+                    setTimeout(redirecionaTelahHome, 100);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    setTimeout(redirecionaTelahHome, 100);
+                }
+            });
         }
     </script>
     {% endblock %}
@@ -77,9 +133,13 @@
                     data-placement="top" title="Voltar">
                     <i class="bi bi-arrow-return-left"></i>
                 </button>
+                <button type="submit" class="btn btn-primary" onclick="imprimir()" data-toggle="tooltip"
+                    data-placement="top" title="Imprimir">
+                    <i class="bi bi-printer"></i>
+                </button>
             </div>
             <div class="media">
-                <h1>Média: {{ (media_total|float)|round(2, 'floor') }}</h1> 
+                <h1>Média: {{ (media_total|float)|round(2, 'floor') }}</h1>
             </div>
         </div>
     </div>

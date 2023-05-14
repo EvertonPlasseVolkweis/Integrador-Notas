@@ -83,7 +83,7 @@
     <form id="meu-form" action="/api/v1/avaliacao/cadastro/" method="post">
       <div class="form-group">
         <label for="descricao">Tipo de Avaliação:</label>
-        <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao">
+        <select class="form-control" id="tipo_avaliacao" name="tipo_avaliacao" required>
           <option value="" disabled selected>Selecione o Tipo de Avaliação</option>
           {% if grupo.grupo == "Professores" %}
           <option value="aluno">Avaliação Aluno</option>
@@ -94,7 +94,7 @@
       </div>
       <div class="form-group">
         <label for="nome">Nome da Avaliação:</label>
-        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação">
+        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação" required>
       </div>
       <div class="form-group">
         <label for="descricao">Descrição:</label>
@@ -103,7 +103,7 @@
       </div>
       <div class="form-group">
         <label for="usuarios">Aluno Avaliado:</label>
-        <select class="form-control" id="usuarios" name="usuario">
+        <select class="form-control" id="usuarios" name="usuario" required>
           <option value="" disabled selected>Selecione um Usuário</option>
           {% for usuario in usuarios %}
           <option value="{{usuario.id}}">{{usuario.nome}}</option>
@@ -112,7 +112,7 @@
       </div>
       <div class="form-group">
         <label for="turmas">Turmas:</label>
-        <select class="form-control" id="turmas" name="turma">
+        <select class="form-control" id="turmas" name="turma" required>
           <option value="" disabled selected>Selecione a Turma</option>
           {% for turma in turmas %}
           {% for disciplina in disciplinas %}

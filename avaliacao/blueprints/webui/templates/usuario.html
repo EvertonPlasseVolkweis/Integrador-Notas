@@ -41,6 +41,7 @@
             }
         });
         function turmas(item_id) {
+            localStorage.setItem('turmas', item_id)
             $.ajax({
                 url: "/turmas/" + item_id,
                 method: "GET",
@@ -106,13 +107,19 @@
 
 <body>
     <div class="container">
+        {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
+        <h1>Tabela Usuários</h1>
+        {% endif %}
+        {% if perfil.perfil == "aluno"%}
         <h1>Tabela Aluno</h1>
+        {% endif %}
         <table class="table">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>RA</th>
                     <th>CPF</th>
+                    <th>Grupo</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -122,6 +129,13 @@
                     <td>{{ item.nome }}</td>
                     <td>{{ item.ra }}</td>
                     <td>{{ item.cpf }}</td>
+                    <td>
+                        {% for grupo in grupos %}
+                            {% if grupo.id == item.fk_id_grupo %}
+                                {{ grupo.grupo }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
                     <td>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Disciplinas" onclick="turmas(this.getAttribute('data-id'))"><i

@@ -1,3 +1,4 @@
+from collections import Counter
 from functools import wraps
 from flask import abort, redirect, render_template, request
 from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, verify_jwt_in_request
@@ -66,14 +67,32 @@ def professor_required(view_function):
 def login():
     return render_template("login-teste.html")
 
-
 @login_required
 def home():
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-    return render_template("index.html", perfil=perfil)
+    avaliacoes = Avaliacao.query.all()
+
+    # Mapear os tipos de avaliação para novas descrições
+    tipos_para_descricoes = {
+        "aluno": "Avaliação de Aluno",
+        "colega": "Avaliação de Equipe",
+        "auto": "Auto Avaliação",
+    }
+
+    # Contar a quantidade de cada tipo de avaliacao
+    tipos_avaliacao = [avaliacao.tipo_avaliacao for avaliacao in avaliacoes]
+    contagem_avaliacoes = Counter(tipos_avaliacao)
+
+    # Passar os dados para o template, usando as novas descrições
+    labels = [tipos_para_descricoes[tipo] for tipo in contagem_avaliacoes.keys()]
+    data = list(contagem_avaliacoes.values())
+    print(labels)
+    print(data)
+    return render_template("index.html", perfil=perfil, labels=labels, data=data)
+
 
 
 @login_required
@@ -280,13 +299,13 @@ def visualiza_usuarios():
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-
+    grupos = Grupo.query.all()
     if perfil.perfil == 'professor' or perfil.perfil == 'admin':
         usuarios = Usuario.query.all()
     else:
         usuarios = [user]
 
-    return render_template("usuario.html", usuarios=usuarios, perfil=perfil)
+    return render_template("usuario.html", usuarios=usuarios, perfil=perfil, grupos=grupos)
 
 
 @login_required
@@ -322,6 +341,8 @@ def visualiza_boletim(item_nome, id_turma):
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     usuario = Usuario.query.filter_by(nome=item_nome).first()
+    nomeUsuario = usuario.nome
+    print(nomeUsuario)
     consulta = text("""
     SELECT av.titulo, av.descricao, av.tipo_avaliacao, 
     JSON_GROUP_ARRAY(json_object('titulo', ha.titulo, 'nota', na.valor, 'fator_peso', ha.fator_peso)) AS notas 
@@ -378,4 +399,4 @@ def visualiza_boletim(item_nome, id_turma):
             for avaliacao in result2:
                 media_final = avaliacao[0]
 
-            return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil)
+            return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil, nomeUsuario=nomeUsuario)

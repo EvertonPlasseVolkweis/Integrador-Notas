@@ -5,6 +5,8 @@
 <head>
     <title>{% block title %}Tabela Avaliação Turma{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -40,7 +42,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         function voltar() {
-            window.location.replace("/usuarios");
+            const teste = localStorage.getItem('turmas')
+            window.location.replace('/turmas/' + teste);
         }
         function deleteAvaliacao(avaliacaoId) {
             if (confirm('Deseja realmente deletar essa avaliação?')) {
@@ -57,6 +60,24 @@
                 });
             }
         }
+        function redirecionaTelahHome() {
+            window.location.replace('/');
+        }
+        function logout() {
+            $.ajax({
+                url: '/api/v1/logout',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: '',
+                success: function (resultado) {
+                    setTimeout(redirecionaTelahHome, 100);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    setTimeout(redirecionaTelahHome, 100);
+                }
+            });
+        }
     </script>
     {% endblock %}
     <div class="container">
@@ -71,7 +92,9 @@
                     <th>Sala</th>
                     <th>Disciplina</th>
                     <th>Equipe</th>
+                    {% if perfil.perfil != 'aluno' %}
                     <th>Ações</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -90,18 +113,21 @@
                     <td>{{ item.numero }}</td>
                     <td>{{ item.titulo }}</td>
                     <td>{{ item.apelido }}</td>
+                    {% if perfil.perfil != 'aluno' %}
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Visualizar"
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Visualizar"
                             onclick="window.location.replace('/visualiza-avaliacao/' + this.getAttribute('data-id'))"><i
                                 class="bi bi-info-circle"></i></button>
-                        {% if perfil.perfil != 'aluno' %}
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Editar"
+                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Editar"
                             onclick="window.location.replace('/edita-avaliacao/' + this.getAttribute('data-id'))"><i
                                 class="bi bi-pencil"></i></button>
-                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}" data-toggle="tooltip" data-placement="top" title="Excluir"
+                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}" data-toggle="tooltip"
+                            data-placement="top" title="Excluir"
                             onclick="deleteAvaliacao(this.getAttribute('data-id'))"><i class="bi bi-trash"></i></button>
-                        {% endif %}
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

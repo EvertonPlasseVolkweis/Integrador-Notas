@@ -58,6 +58,12 @@
             });
         });
     </script>
+    <style>
+        h2 {
+            margin-top: 40px;
+            /* Ajuste o valor de acordo com a margem desejada */
+        }
+    </style>
 </head>
 {% endblock %}
 {% block content %}
@@ -74,6 +80,21 @@
         function redirecionaTelahHome() {
             window.location.replace('/');
         }
+        function logout() {
+            $.ajax({
+                url: '/api/v1/logout',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: '',
+                success: function (resultado) {
+                    setTimeout(redirecionaTelahHome, 100);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    setTimeout(redirecionaTelahHome, 100);
+                }
+            });
+        }
     </script>
     {% endblock %}
     <div class="container">
@@ -82,7 +103,9 @@
         {% for nota in notaAvalia %}
         {% set notas_dict = notas_dict.update({(nota.habilidade_atitude.titulo): nota.valor}) %}
         {% endfor %}
-        <form id="meu-form" action="{{ '/api/v1/nota-avalia/editar/' + (avaliacaoId|string) if editando else '/api/v1/nota-avalia/cadastro' }}" method="post">
+        <form id="meu-form"
+            action="{{ '/api/v1/nota-avalia/editar/' + (avaliacaoId|string) if editando else '/api/v1/nota-avalia/cadastro' }}"
+            method="post">
             {% if visualizando != True and editando != True%}
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
@@ -94,27 +117,43 @@
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
             <h2>{{ categoria }}</h2>
-            <div class="form-group">
+            <div class="row">
+                {% set half = itens.items()|length // 2 %}
                 {% for criterio, peso in itens.items() %}
-                <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}"
-                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
-                    grupo.grupo=="Alunos" }} {{ "disabled" if
-                    visualizando==True else "" }}>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                        <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                            name="{{ categoria }}-{{ criterio }}"
+                            value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
+                            grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
+                    </div>
+                </div>
+                {% if loop.index == half %}
+            </div>
+            <div class="row">
+                {% endif %}
                 {% endfor %}
             </div>
             {% endif %}
             {% if categoria != "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
-            <div class="form-group">
+            <div class="row">
+                {% set half = itens.items()|length // 3 %}
                 {% for criterio, peso in itens.items() %}
-                <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                    name="{{ categoria }}-{{ criterio }}"
-                    value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
-                    grupo.grupo=="Alunos" }} {{ "disabled" if
-                    visualizando==True else "" }}>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                        <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                            name="{{ categoria }}-{{ criterio }}"
+                            value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
+                            grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
+                    </div>
+                </div>
+                {% if loop.index == half %}
+            </div>
+            <div class="row">
+                {% endif %}
                 {% endfor %}
             </div>
             {% endif %}
@@ -123,6 +162,7 @@
             <button type="submit" class="btn btn-primary">Salvar</button>
             {% endif %}
         </form>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi4jizo"
