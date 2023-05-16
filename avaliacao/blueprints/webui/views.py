@@ -271,8 +271,9 @@ def edita_avaliacao(item_id):
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     matriz = MATRIZ_AVALIACAO
     avaliacao = Avaliacao.query.filter_by(id=item_id).first()
+    tipoAvaliacao = avaliacao.tipo_avaliacao
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
-    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, avaliacaoId=item_id)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, tipoAvaliacao=tipoAvaliacao, avaliacaoId=item_id)
 
 @login_required
 def edita_disciplina(id):
