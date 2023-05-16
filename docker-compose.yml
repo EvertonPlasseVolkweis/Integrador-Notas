@@ -1,0 +1,7 @@
+version: '3.5'
+services:
+  app:
+    image: app:1.7
+    ports:
+           - "5000:5000"
+
