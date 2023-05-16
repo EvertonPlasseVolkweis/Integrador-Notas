@@ -5,6 +5,8 @@
 <head>
     <title>{% block title %}Tabela Sala{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -76,7 +78,8 @@
     <div class="container">
         <div class="header">
             <h1>Tabela Sala</h1>
-            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Cadastrar"  onclick="window.location.replace('/form-sala')">
+            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Cadastrar"
+                onclick="window.location.replace('/form-sala')">
                 <i class="bi bi-plus"></i>
             </button>
         </div>
@@ -84,7 +87,6 @@
             <thead>
                 <tr>
                     <th>Numero</th>
-                    <th>Turno</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -92,13 +94,12 @@
                 {% for item in sala %}
                 <tr>
                     <td>{{ item.numero }}</td>
-                    <td>{{ item.turno }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                        <!-- <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Visualizar"
                             onclick="window.location.replace('/visualiza-sala/' + this.getAttribute('data-id'))">
                             <i class="bi bi-info-circle"></i>
-                        </button>
+                        </button> -->
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Editar"
                             onclick="window.location.replace('/edita-sala/' + this.getAttribute('data-id'))">

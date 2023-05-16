@@ -68,6 +68,10 @@
         .form-group-text {
             margin: 20px;
         }
+
+        .login {
+            margin-top: 2vh;
+        }
     </style>
     <script>
         $(function () {
@@ -108,9 +112,11 @@
     <div class="card">
         <div class="card-body d-flex flex-column justify-content-center">
             <div class="text-center">
-                <img src="{{ url_for('static', filename='Capturar.jpg') }}" alt="Logo" width="150" height="100">
+                <img src="{{ url_for('static', filename='fundo-removebg-preview.png') }}" alt="Logo" width="150" height="100">
             </div>
-            <h2>Login</h2>
+            <div class="login">
+                <h2>Login</h2>
+            </div>
             <form id="meu-form" action="/api/v1/busca-usuario" method="get" class="forms">
                 <div class="form-group-text">
                     <label for="email">Email</label>

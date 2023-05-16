@@ -56,16 +56,17 @@
                 }
             });
         }
-        function buscaAvaliacoes(id) {
+        function buscaAvaliacoes(id, idTurma) {
+            console.log(idTurma)
             $.ajax({
-                url: "/tabela-avaliacao-turma/" + id,
+                url: "/tabela-avaliacao-turma/" + id + "/" + idTurma,
                 method: "GET",
                 success: function (response) {
                     if (response.error) {
                         console.log('asdasd');
                         toastr.error("Não há avaliações disponíveis para este usuário.");
                     } else {
-                        window.location.replace("/tabela-avaliacao-turma/" + id);
+                        window.location.replace("/tabela-avaliacao-turma/" + id + "/" + idTurma);
                     }
                 }
             });
@@ -102,9 +103,10 @@
                             onclick="visualizarBoletim(this.getAttribute('data-nome'), this.getAttribute('data-idturma'))">
                             <i class="bi bi-mortarboard-fill"></i>
                         </button>
-                        <button type="submit" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                        <button type="submit" class="btn btn-primary" data-id="{{ item.id }}"
+                        data-idturma="{{ item.id_turma }}" data-toggle="tooltip"
                             data-placement="top" title="Avaliações"
-                            onclick="buscaAvaliacoes(this.getAttribute('data-id'))"><i
+                            onclick="buscaAvaliacoes(this.getAttribute('data-id'), this.getAttribute('data-idturma'))"><i
                                 class="bi bi-layout-text-sidebar-reverse"></i></button>
                     </td>
                 </tr>
