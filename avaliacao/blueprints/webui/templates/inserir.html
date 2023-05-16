@@ -95,6 +95,25 @@
                 }
             });
         }
+        $(document).ready(function () {
+            $('#avaliacao').change(function () {
+                var avaliacao = $(this).val();
+                if (avaliacao) {
+                    $("#avaliacao option").each(function () {
+                        $(this).show();
+                        console.log($(this).data('usuario-id'));
+                        var tipo = $(this).data('usuario-id')
+                        if (tipo == "colega" || tipo == "auto") {
+                            console.log('if');
+                            $('div[data-categoria="Conhecimentos"]').hide();
+                        } else {
+                            console.log('else');
+                            $('div[data-categoria="Conhecimentos"]').show();
+                        }
+                    });
+                }
+            });
+        });
     </script>
     {% endblock %}
     <div class="container">
@@ -107,35 +126,39 @@
             action="{{ '/api/v1/nota-avalia/editar/' + (avaliacaoId|string) if editando else '/api/v1/nota-avalia/cadastro' }}"
             method="post">
             {% if visualizando != True and editando != True%}
+            <label for="avaliacao">Avaliação:</label>
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
                 {% for avaliacao in avaliacao %}
-                <option value="{{avaliacao.id}}">{{avaliacao.titulo}}</option>
+                <option value="{{avaliacao.id}}" data-usuario-id="{{ avaliacao.tipo_avaliacao }}">{{avaliacao.titulo}}
+                </option>
                 {% endfor %}
             </select>
             {% endif %}
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
-            {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
-            <h2>{{ categoria }}</h2>
-            <div class="row">
-                {% set half = itens.items()|length // 2 %}
-                {% for criterio, peso in itens.items() %}
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                        <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                            name="{{ categoria }}-{{ criterio }}"
-                            value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
-                            grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
+            <div data-categoria="{{ categoria }}">
+                {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
+                <h2>{{ categoria }}</h2>
+                <div class="row">
+                    {% set half = itens.items()|length // 2 %}
+                    {% for criterio, peso in itens.items() %}
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                            <input placeholder="0 a 100" type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                                name="{{ categoria }}-{{ criterio }}"
+                                value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required"
+                                if grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
+                        </div>
                     </div>
+                    {% if loop.index == half %}
                 </div>
-                {% if loop.index == half %}
-            </div>
-            <div class="row">
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
                 {% endif %}
-                {% endfor %}
             </div>
-            {% endif %}
             {% if categoria != "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
             <div class="row">
@@ -144,7 +167,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                        <input type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
+                        <input placeholder="0 a 100" type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
                             name="{{ categoria }}-{{ criterio }}"
                             value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
                             grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>

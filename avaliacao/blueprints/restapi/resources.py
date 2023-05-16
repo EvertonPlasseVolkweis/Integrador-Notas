@@ -247,7 +247,7 @@ class SalvaDisciplina(Resource):
 class AtualizaDisciplina(Resource):
     def put(self, disciplinaId):
         dados = request.get_json()
-        disciplina = Disciplina.query.filter_by(id=disciplinaId).all()
+        disciplina = Disciplina.query.get(disciplinaId)
 
         print(dados)
 
@@ -259,7 +259,8 @@ class AtualizaDisciplina(Resource):
     
 class DeleteDisciplina(Resource):
     def delete(self, disciplinaId):
-        disciplina = Disciplina.query.filter_by(id=disciplinaId).all()
+        disciplina = Disciplina.query.get(disciplinaId)
+
 
         if disciplina is None:
             return make_response({"message": "Disciplina não encontrada"}, 404)
@@ -299,7 +300,7 @@ class AtualizaEquipe(Resource):
     
 class DeleteEquipe(Resource):
     def delete(self, id):
-        equipe = Equipe.query.filter_by(id=id).all()
+        equipe = Equipe.query.get(id)
 
         if equipe is None:
             return make_response({"message": "Equipe não encontrada"}, 404)
@@ -321,7 +322,7 @@ class GetSala(Resource):
 class SalvaSala(Resource):
     def post(self):
         dados = request.get_json()
-        sala = Sala(numero=dados['numero'], turno=dados['turno'])
+        sala = Sala(numero=dados['numero'], turno='')
         db.session.add(sala)
         db.session.commit()
         return make_response({"message": "Sala salva com sucesso!"}, 200)
@@ -339,7 +340,7 @@ class AtualizaSala(Resource):
     
 class DeleteSala(Resource):
     def delete(self, id):
-        sala = Sala.query.filter_by(id=id).all()
+        sala = Sala.query.get(id)
 
         if sala is None:
             return make_response({"message": "Sala não encontrada"}, 404)

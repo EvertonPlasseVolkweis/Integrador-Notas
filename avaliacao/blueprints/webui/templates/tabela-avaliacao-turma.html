@@ -89,9 +89,8 @@
                 <tr>
                     <th>Tipo Avaliação</th>
                     <th>Nome Aluno</th>
-                    <th>Sala</th>
-                    <th>Disciplina</th>
-                    <th>Equipe</th>
+                    <th>Titulo Avaliação</th>
+                    <th>Status</th>
                     {% if perfil.perfil != 'aluno' %}
                     <th>Ações</th>
                     {% endif %}
@@ -110,9 +109,13 @@
                     <td>Avaliação Professor</td>
                     {% endif %}
                     <td>{{ item.nome }}</td>
-                    <td>{{ item.numero }}</td>
                     <td>{{ item.titulo }}</td>
-                    <td>{{ item.apelido }}</td>
+                    {% if item.tem_nota == 0 %}
+                    <td>Em aberto</td>
+                    {% endif %}
+                    {% if item.tem_nota == 1 %}
+                    <td>Concluída</td>
+                    {% endif %}
                     {% if perfil.perfil != 'aluno' %}
                     <td>
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
