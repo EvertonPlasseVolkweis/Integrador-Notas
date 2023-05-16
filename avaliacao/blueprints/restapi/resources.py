@@ -181,6 +181,7 @@ class EditAvaliacao(Resource):
 class EditUsuario(Resource):
     def put(self, idUsuario):
         data = request.get_json()
+        print(data['grupo'])
         usuario = Usuario.query.filter_by(id=idUsuario).first()
         
         if not usuario:
@@ -195,9 +196,9 @@ class EditUsuario(Resource):
         if 'senha' in data:
             usuario.senha = data['senha']
         if 'fk_id_grupo' in data:
-            usuario.fk_id_grupo = data['fk_id_grupo']
+            usuario.fk_id_grupo = data['grupo']
         if 'fk_id_perfil' in data:
-            usuario.fk_id_perfil = data['fk_id_perfil']
+            usuario.fk_id_perfil = data['perfil']
         if 'nome' in data:
             usuario.nome = data['nome']
         if 'ra' in data:

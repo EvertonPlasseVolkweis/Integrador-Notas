@@ -137,7 +137,7 @@
             {% endif %}
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             <div data-categoria="{{ categoria }}">
-                {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
+                {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" and tipoAvaliacao == "aluno"%}
                 <h2>{{ categoria }}</h2>
                 <div class="row">
                     {% set half = itens.items()|length // 2 %}
