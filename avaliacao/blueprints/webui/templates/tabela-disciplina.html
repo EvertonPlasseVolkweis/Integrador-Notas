@@ -5,6 +5,8 @@
 <head>
     <title>{% block title %}Tabela Disciplina{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -94,11 +96,11 @@
                     <td>{{ item.titulo }}</td>
                     <td>{{ item.ementa }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
+                        <!-- <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Visualizar"
                             onclick="window.location.replace('/visualiza-disciplina/' + this.getAttribute('data-id'))">
                             <i class="bi bi-info-circle"></i>
-                        </button>
+                        </button> -->
                         <button type="button" class="btn btn-primary" data-id="{{ item.id }}" data-toggle="tooltip"
                             data-placement="top" title="Editar"
                             onclick="window.location.replace('/edita-disciplina/' + this.getAttribute('data-id'))">

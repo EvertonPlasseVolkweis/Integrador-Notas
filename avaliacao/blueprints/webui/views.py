@@ -91,7 +91,7 @@ def home():
     data = list(contagem_avaliacoes.values())
     print(labels)
     print(data)
-    return render_template("index.html", perfil=perfil, labels=labels, data=data)
+    return render_template("index.html", perfil=perfil, user=user, labels=labels, data=data)
 
 
 
@@ -171,24 +171,21 @@ def cadastro_avaliacao():
 
 
 @login_required
-def tabela_avaliacao_turma(item_id):
+def tabela_avaliacao_turma(item_id, id_turma):
     verify_jwt_in_request()
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     usuario = Usuario.query.filter_by(id=item_id).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     consulta = text("""
-    SELECT a.titulo, a.tipo_avaliacao, u.nome, s.numero, d.titulo, e.apelido, a.id
+    SELECT a.titulo, a.tipo_avaliacao, u.nome, a.id, a.tem_nota
     FROM avaliacao a
-    LEFT JOIN turma t ON t.fk_id_usuario IN (a.fk_id_usuario)
     LEFT JOIN usuario u ON u.id IN (a.fk_id_usuario)
-    LEFT JOIN sala s ON s.id IN (t.fk_id_sala)
-    LEFT JOIN disciplina d ON d.id IN (t.fk_id_disciplina)
-    LEFT JOIN equipe e ON e.id IN (t.fk_id_equipe)
-    WHERE u.id = :idUsuario AND a.tem_nota = 1""")
-    parametros = {'idUsuario': item_id}
+    WHERE u.id = :idUsuario  AND a.fk_id_turma = :idTurma AND a.tem_nota = 1""")
+    parametros = {'idUsuario': item_id, 'idTurma': id_turma}
     execute = db.session.execute(consulta, parametros)
     result = execute.fetchall()
+    print(result)
     if not result:  # Verifica se result2 é uma lista vazia
         flash("Não há avaliações disponíveis para este usuário.", "error")
         print('ife1')
@@ -409,7 +406,7 @@ def visualiza_boletim(item_nome, id_turma):
     execute2 = db.session.execute(consulta2, parametros2)
     result = execute.fetchall()
     result2 = execute2.fetchall()
-    if not result:  # Verifica se result2 é uma lista vazia
+    if not result or result2 == [(None,)]:  # Verifica se result2 é uma lista vazia
         flash("Não há avaliações disponíveis para este usuário.", "error")
         return jsonify({"error": True})
     else:
