@@ -33,4 +33,5 @@ def init_app(app):
     api.add_resource(SalvaSala, "/sala/")
     api.add_resource(AtualizaSala, "/sala/<int:id>")
     api.add_resource(DeleteSala, "/sala/<int:id>")
+    api.add_resource(DeleteTurma, "/turma/<int:id>")
     app.register_blueprint(bp)
