@@ -158,7 +158,6 @@
                         {% endif %}
                         {% if perfil.perfil == "aluno" or perfil.perfil == "professor" or perfil.perfil == "admin"%}
                         <a class="dropdown-item" href="/cadastrar-avaliacao" title="Cadastrar uma Avaliação para um Aluno">Cadastrar Avaliação</a>
-
                         {% endif %}
                     </div>
                 </li>
@@ -169,7 +168,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
                         <!-- <a class="dropdown-item" href="/tabela-avaliacao-turma">Tabela Avaliações</a> -->
-                        {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
+                        {% if perfil.perfil == "professor" or perfil.perfil == "admin" or perfil.perfil == "aluno"%}
                         <a class="dropdown-item" href="/inserir-notas" title="Lançar Notas em uma Avaliação">Lançar Notas</a>
                         {% endif %}
                         {% if perfil.perfil == "admin"%}
