@@ -31,6 +31,7 @@ bp.add_url_rule('/form-sala', view_func=formSalaView)
 bp.add_url_rule('/edita-sala/<int:id>', view_func=edita_sala)
 bp.add_url_rule('/visualiza-sala/<int:id>', view_func=visualiza_sala)
 bp.add_url_rule('/turmas/<int:item_id>', view_func=visualiza_turmas)
+bp.add_url_rule('/gerenciamento', view_func=gerenciamento)
 
 def init_app(app):
     app.register_blueprint(bp)

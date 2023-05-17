@@ -72,10 +72,11 @@
     {% block scripts %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const avaliacaoId = "{{ avaliacaoId }}";
+        const avaliacaoId = localStorage.getItem('turmaEditaId')
+        const turmaId = localStorage.getItem('turmaEdita')
 
         function redirecionaTela() {
-            window.location.replace('/tabela-avaliacao-turma/' + avaliacaoId);
+            window.location.replace('/tabela-avaliacao-turma/' + avaliacaoId + '/' + turmaId);
         }
         function redirecionaTelahHome() {
             window.location.replace('/');
@@ -99,18 +100,15 @@
             $('#avaliacao').change(function () {
                 var avaliacao = $(this).val();
                 if (avaliacao) {
-                    $("#avaliacao option").each(function () {
-                        $(this).show();
-                        console.log($(this).data('usuario-id'));
-                        var tipo = $(this).data('usuario-id')
-                        if (tipo == "colega" || tipo == "auto") {
-                            console.log('if');
-                            $('div[data-categoria="Conhecimentos"]').hide();
-                        } else {
-                            console.log('else');
-                            $('div[data-categoria="Conhecimentos"]').show();
-                        }
-                    });
+                    var tipo = $("#avaliacao option:selected").data('turma-tipo');
+                    console.log(tipo);
+                    if (tipo == "colega" || tipo == "auto") {
+                        console.log('if');
+                        $('div[data-categoria="Conhecimentos"]').hide();
+                    } else {
+                        console.log('else');
+                        $('div[data-categoria="Conhecimentos"]').show();
+                    }
                 }
             });
         });
@@ -130,13 +128,14 @@
             <select class="form-control" id="avaliacao" name="avaliacao">
                 <option value="" disabled selected>Selecione uma Avaliação</option>
                 {% for avaliacao in avaliacao %}
-                <option value="{{avaliacao.id}}" data-usuario-id="{{ avaliacao.tipo_avaliacao }}">{{avaliacao.titulo}}
+                <option value="{{avaliacao.id}}" data-turma-tipo="{{ avaliacao.tipo_avaliacao }}">{{avaliacao.titulo}}
                 </option>
                 {% endfor %}
             </select>
             {% endif %}
             {% for categoria, itens, peso_categoria in matriz_avaliacao %}
             <div data-categoria="{{ categoria }}">
+                {% if visualizando == True or editando == True%}
                 {% if grupo.grupo == "Professores" and categoria == "Conhecimentos" and tipoAvaliacao == "aluno"%}
                 <h2>{{ categoria }}</h2>
                 <div class="row">
@@ -145,8 +144,8 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                            <input placeholder="0 a 100" type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                                name="{{ categoria }}-{{ criterio }}"
+                            <input placeholder="0 a 100" type="text" class="form-control"
+                                id="{{ categoria }}-{{ criterio }}" name="{{ categoria }}-{{ criterio }}"
                                 value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required"
                                 if grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
                         </div>
@@ -158,6 +157,30 @@
                     {% endfor %}
                 </div>
                 {% endif %}
+                {% else %}
+                {% if grupo.grupo == "Professores" and categoria == "Conhecimentos"%}
+                <h2>{{ categoria }}</h2>
+                <div class="row">
+                    {% set half = itens.items()|length // 2 %}
+                    {% for criterio, peso in itens.items() %}
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
+                            <input placeholder="0 a 100" type="text" class="form-control"
+                                id="{{ categoria }}-{{ criterio }}" name="{{ categoria }}-{{ criterio }}"
+                                value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required"
+                                if grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
+                        </div>
+                    </div>
+                    {% if loop.index == half %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endif %}
+
             </div>
             {% if categoria != "Conhecimentos" %}
             <h2>{{ categoria }}</h2>
@@ -167,8 +190,8 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="{{ categoria }}-{{ criterio }}">{{ criterio }}</label>
-                        <input placeholder="0 a 100" type="text" class="form-control" id="{{ categoria }}-{{ criterio }}"
-                            name="{{ categoria }}-{{ criterio }}"
+                        <input placeholder="0 a 100" type="text" class="form-control"
+                            id="{{ categoria }}-{{ criterio }}" name="{{ categoria }}-{{ criterio }}"
                             value="{{ (notas_dict[criterio]|int) if criterio in notas_dict else '' }}" {{ "required" if
                             grupo.grupo=="Alunos" }} {{ "disabled" if visualizando==True else "" }}>
                     </div>

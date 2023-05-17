@@ -58,7 +58,8 @@
         }
 
         function buscaAvaliacoes(id, idTurma) {
-            console.log(idTurma)
+            localStorage.setItem('turmaEditaId', id)
+            localStorage.setItem('turmaEdita', idTurma)
             $.ajax({
                 url: "/tabela-avaliacao-turma/" + id + "/" + idTurma,
                 method: "GET",
