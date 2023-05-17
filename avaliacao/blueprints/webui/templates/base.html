@@ -30,8 +30,20 @@
             window.location.replace('/')
         }
 
+        function redirecionaSala() {
+            window.location.replace('/tabela-sala')
+        }
+
+        function redirecionaEquipe() {
+            window.location.replace('/tabela-equipe')
+        }
+
+        function redirecionaDisciplina() {
+            window.location.replace('/tabela-disciplina')
+        }
+
         function redirecionaUsuarios() {
-            window.location.replace('/usuarios')
+            setTimeout(window.location.replace('/usuarios'), 1000);
         }
 
         // função logout
@@ -135,18 +147,17 @@
                         Cadastros
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        {% if perfil.perfil == "aluno" or perfil.perfil == "professor" or perfil.perfil == "admin"%}
-                        <a class="dropdown-item" href="/cadastrar-avaliacao">Cadastrar Avaliação</a>
-                        <a class="dropdown-item" href="/inserir-notas">Cadastrar Notas</a>
-                        {% endif %}
                         {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
-                        <a class="dropdown-item" href="/tabela-sala">Cadastrar Sala</a>
-                        <a class="dropdown-item" href="/tabela-disciplina">Cadastrar Disciplina</a>
-                        <a class="dropdown-item" href="/tabela-equipe">Cadastrar Equipe</a>
+                        <a class="dropdown-item" href="/tabela-sala" title="Cadastrar uma Sala no Sistema">Cadastrar Sala</a>
+                        <a class="dropdown-item" href="/tabela-disciplina" title="Cadastrar uma Disciplina no Sistema">Cadastrar Disciplina</a>
+                        <a class="dropdown-item" href="/tabela-equipe" title="Cadastrar uma Equipe no Sistema">Cadastrar Equipe</a>
                         {% endif %}
                         {% if perfil.perfil == "admin" %}
-                        <a class="dropdown-item" href="/cadastro-usuario">Cadastrar Usuário</a>
-                        <a class="dropdown-item" href="/cadastro-turma">Cadastrar Turma</a>
+                        <a class="dropdown-item" href="/cadastro-turma" title="Cadastrar Alunos e Professores numa Turma">Gerenciar Turmas</a>
+                        {% endif %}
+                        {% if perfil.perfil == "aluno" or perfil.perfil == "professor" or perfil.perfil == "admin"%}
+                        <a class="dropdown-item" href="/cadastrar-avaliacao" title="Cadastrar uma Avaliação para um Aluno">Cadastrar Avaliação</a>
+                        <a class="dropdown-item" href="/inserir-notas" title="Lançar Notas em uma Avaliação">Cadastrar Notas</a>
                         {% endif %}
                     </div>
                 </li>
@@ -158,10 +169,10 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
                         <!-- <a class="dropdown-item" href="/tabela-avaliacao-turma">Tabela Avaliações</a> -->
                         {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
-                        <a class="dropdown-item" href="/usuarios">Usuários</a>
+                        <a class="dropdown-item" href="/usuarios" title="Cadastro de Alunos e Professores">Gerenciar Usuários</a>
                         {% endif %}
                         {% if perfil.perfil == "admin"%}
-                        <a class="dropdown-item" href="/gerenciamento">Gerenciar Pesos</a>
+                        <a class="dropdown-item" href="/gerenciamento">Visualizar Pesos</a>
                         {% endif %}
                         {% if perfil.perfil == "aluno"%}
                         <a class="dropdown-item" href="/usuarios">Boletim</a>

@@ -67,6 +67,7 @@ def professor_required(view_function):
 def login():
     return render_template("login-teste.html")
 
+
 @login_required
 def home():
     verify_jwt_in_request()
@@ -87,12 +88,12 @@ def home():
     contagem_avaliacoes = Counter(tipos_avaliacao)
 
     # Passar os dados para o template, usando as novas descrições
-    labels = [tipos_para_descricoes[tipo] for tipo in contagem_avaliacoes.keys()]
+    labels = [tipos_para_descricoes[tipo]
+              for tipo in contagem_avaliacoes.keys()]
     data = list(contagem_avaliacoes.values())
     print(labels)
     print(data)
     return render_template("index.html", perfil=perfil, user=user, labels=labels, data=data)
-
 
 
 @login_required
@@ -124,7 +125,6 @@ def cadastro_turma():
     return render_template("cadastro-turma.html", equipe=equipe, sala=sala, disciplina=disciplina, usuarios=usuarios, perfil=perfil)
 
 
-
 @login_required
 def inserir_notas():
     verify_jwt_in_request()
@@ -133,7 +133,8 @@ def inserir_notas():
     grupo = Grupo.query.filter_by(id=user.fk_id_grupo).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     print(idUsuario)
-    avaliacao = Avaliacao.query.filter_by(tem_nota=False, fk_id_usuario_avaliador=idUsuario).all()
+    avaliacao = Avaliacao.query.filter_by(
+        tem_nota=False, fk_id_usuario_avaliador=idUsuario).all()
     matriz = MATRIZ_AVALIACAO
     matriz = MATRIZ_AVALIACAO
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, avaliacao=avaliacao, perfil=perfil, editando=False)
@@ -278,6 +279,7 @@ def edita_avaliacao(item_id):
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
     return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, turmaId=turmaId, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, tipoAvaliacao=tipoAvaliacao, avaliacaoId=item_id)
 
+
 @login_required
 def edita_disciplina(id):
     idUsuario = get_jwt_identity()
@@ -285,6 +287,7 @@ def edita_disciplina(id):
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     disciplina = Disciplina.query.filter_by(id=id).first()
     return render_template("form-disciplina.html", visualizando=False, editando=True, dados=disciplina, id=disciplina.id, perfil=perfil)
+
 
 @login_required
 def visualiza_disciplina(id):
@@ -294,6 +297,7 @@ def visualiza_disciplina(id):
     disciplina = Disciplina.query.filter_by(id=id).first()
     return render_template("form-disciplina.html", visualizando=True, editando=False, dados=disciplina, perfil=perfil)
 
+
 @login_required
 def edita_equipe(id):
     idUsuario = get_jwt_identity()
@@ -301,6 +305,7 @@ def edita_equipe(id):
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     equipe = Equipe.query.filter_by(id=id).first()
     return render_template("form-equipe.html", visualizando=False, editando=True, dados=equipe, id=equipe.id, perfil=perfil)
+
 
 @login_required
 def visualiza_equipe(id):
@@ -310,6 +315,7 @@ def visualiza_equipe(id):
     equipe = Equipe.query.filter_by(id=id).first()
     return render_template("form-equipe.html", visualizando=True, editando=False, dados=equipe, perfil=perfil)
 
+
 @login_required
 def edita_sala(id):
     sala = Sala.query.filter_by(id=id).first()
@@ -317,6 +323,7 @@ def edita_sala(id):
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("form-sala.html", visualizando=False, editando=True, dados=sala, id=sala.id, perfil=perfil)
+
 
 @login_required
 def visualiza_sala(id):
@@ -400,17 +407,18 @@ def visualiza_boletim(item_nome, id_turma):
     LEFT JOIN habilidade_atitude ha ON ha.id = na.fk_id_habilidade_atitude 
     LEFT JOIN usuario us ON us.id = av.fk_id_usuario 
     LEFT JOIN grupo g ON g.id = us.fk_id_grupo 
-    WHERE av.fk_id_usuario = :idUsuario AND av.tem_nota = 1
+    WHERE av.fk_id_usuario = :idUsuario AND av.fk_id_turma = :idTurma AND  av.tem_nota = 1
     GROUP BY av.id 
     """)
     consulta2 = text("SELECT SUM(total_porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, SUM(porcentagem_nota) AS total_porcentagem_nota FROM (SELECT tipo_avaliacao, habilidade_titulo, nota_percentual, CASE WHEN tipo_avaliacao = 'aluno' THEN nota_percentual * 0.8 WHEN tipo_avaliacao = 'colega' THEN nota_percentual * 0.1 WHEN tipo_avaliacao = 'auto' THEN nota_percentual * 0.1 ELSE nota_percentual END AS porcentagem_nota FROM (SELECT CASE WHEN ha.titulo IN ('Unidades de Aprendizagem (Uas)', 'Entrega', 'Avaliação objetiva', 'Avaliação dissertativa') THEN 'conhecimento' ELSE av.tipo_avaliacao END AS tipo_avaliacao, ha.titulo AS habilidade_titulo, (SUM(summed_na.valor_total) / COUNT(DISTINCT av.id)) * ha.fator_peso AS nota_percentual, ha.fator_peso FROM avaliacao av LEFT JOIN (SELECT fk_id_avaliacao, fk_id_habilidade_atitude, SUM(valor) AS valor_total FROM nota_avalia GROUP BY fk_id_avaliacao, fk_id_habilidade_atitude) summed_na ON summed_na.fk_id_avaliacao = av.id LEFT JOIN habilidade_atitude ha ON ha.id = summed_na.fk_id_habilidade_atitude LEFT JOIN usuario us ON us.id = av.fk_id_usuario LEFT JOIN grupo g ON g.id = us.fk_id_grupo WHERE av.fk_id_usuario = :idUsuario and av.fk_id_turma = :idTurma GROUP BY tipo_avaliacao, ha.titulo) subquery) subquery_porcentagem GROUP BY tipo_avaliacao) subquery_total")
-    parametros = {'idUsuario': usuario.id}
+    parametros = {'idUsuario': usuario.id, 'idTurma': id_turma}
     parametros2 = {'idUsuario': usuario.id, 'idTurma': id_turma}
     execute = db.session.execute(consulta, parametros)
     execute2 = db.session.execute(consulta2, parametros2)
     result = execute.fetchall()
     result2 = execute2.fetchall()
-    if not result or result2 == [(None,)]:  # Verifica se result2 é uma lista vazia
+    # Verifica se result2 é uma lista vazia
+    if not result or result2 == [(None,)]:
         flash("Não há avaliações disponíveis para este usuário.", "error")
         return jsonify({"error": True})
     else:
@@ -433,7 +441,8 @@ def visualiza_boletim(item_nome, id_turma):
                 aval_dict = json.loads(avaliacao[3])
 
                 # Calcula a média da avaliação
-                media = sum([a.get('nota', 0) * a.get('fator_peso', 0) for a in aval_dict if a.get('nota') is not None and a.get('fator_peso') is not None]) / sum([a.get('fator_peso', 0) for a in aval_dict if a.get('fator_peso') is not None])
+                media = sum([a.get('nota', 0) * a.get('fator_peso', 0) for a in aval_dict if a.get('nota') is not None and a.get(
+                    'fator_peso') is not None]) / sum([a.get('fator_peso', 0) for a in aval_dict if a.get('fator_peso') is not None])
 
                 # Armazena a média no dicionário medias
                 medias[avaliacao[0]] = media
@@ -442,14 +451,15 @@ def visualiza_boletim(item_nome, id_turma):
                 media_arredondada = round(media, 2)
 
                 array.append({"titulo": avaliacao[0], "descricao": avaliacao[1],
-                            "tipo": avaliacao[2], "media": media_arredondada})
+                              "tipo": avaliacao[2], "media": media_arredondada})
 
             soma_total = round(soma_total / len(result), 2)
             for avaliacao in result2:
                 media_final = avaliacao[0]
 
             return render_template("boletim.html", data=array, media_total=media_final, perfil=perfil, nomeUsuario=nomeUsuario)
-        
+
+
 @login_required
 def disciplinaView():
     verify_jwt_in_request()
@@ -459,12 +469,14 @@ def disciplinaView():
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("tabela-disciplina.html", disciplina=disciplina, perfil=perfil)
 
+
 @login_required
 def formDisciplinaView():
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("form-disciplina.html", perfil=perfil)
+
 
 @login_required
 def equipeView():
@@ -475,12 +487,14 @@ def equipeView():
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("tabela-equipe.html", equipe=equipe, perfil=perfil)
 
+
 @login_required
 def formEquipeView():
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("form-equipe.html", perfil=perfil)
+
 
 @login_required
 def salaView():
@@ -490,6 +504,7 @@ def salaView():
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("tabela-sala.html", sala=sala, perfil=perfil)
+
 
 @login_required
 def formSalaView():

@@ -68,10 +68,17 @@
                         location.reload();
                     },
                     error: function (xhr, textStatus, errorThrown) {
-                        toastr.error("Erro ao deletar: " + errorThrown);
+                        if (errorThrown === "INTERNAL SERVER ERROR") {
+                            toastr.error("Erro ao deletar: " + "Não é possivel deletar a disciplina no momento");
+                        } else {
+                            toastr.error("Erro ao deletar: " + errorThrown);
+                        }
                     }
                 });
             }
+        }
+        function voltar() {
+            window.location.replace('/');
         }
     </script>
     {% endblock %}

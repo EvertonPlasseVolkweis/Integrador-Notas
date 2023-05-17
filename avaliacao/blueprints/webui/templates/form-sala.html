@@ -39,7 +39,7 @@
           success: function (resultado) {
             // Processa a resposta da requisição
             toastr.success("Sucesso!");
-            setTimeout(window.location.reload(), 3000)
+            setTimeout(redirecionaSala(), 3000)
           },
           error: function (jqXHR, textStatus, errorThrown) {
             toastr.error(jqXHR.responseJSON.message);
