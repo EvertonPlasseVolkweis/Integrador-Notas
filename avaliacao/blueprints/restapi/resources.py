@@ -350,3 +350,16 @@ class DeleteSala(Resource):
         db.session.commit()
 
         return make_response({"message": "Sala deletada com sucesso!"}, 200)
+    
+class DeleteTurma(Resource):
+    def delete(self, id):
+        turma = Turma.query.get(id)
+
+        if turma is None:
+            return make_response({"message": "Turma não encontrada"}, 404)
+                
+        db.session.delete(turma)
+        
+        db.session.commit()
+
+        return make_response({"message": "Turma deletada com sucesso!"}, 200)

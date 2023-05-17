@@ -12,6 +12,36 @@
         flex-direction: column;
         margin-top: 50px;
     }
+
+    .welcome {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;  
+    }
+
+    /* Estilos para o card */
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 800px; /* Aumente esse valor conforme necessário */
+      margin: 0 auto; /* Centralize o card horizontalmente */
+    }
+    
+    /* Estilos para o título do card */
+    .card-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    /* Estilos para o conteúdo do card */
+    .card-content {
+      font-size: 16px;
+      color: #333;
+    }
 </style>
 {% endblock %}
 
@@ -29,7 +59,9 @@
 </div>
 <div id="chart-container">
     <h2>Total de Avaliações por Tipo</h2>
-    <canvas id="myChart"></canvas>
+    <div class="card">
+        <canvas class="card-content" id="myChart"></canvas>
+    </div>
 </div>
 
 <script>
