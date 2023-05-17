@@ -181,29 +181,18 @@ class EditAvaliacao(Resource):
 class EditUsuario(Resource):
     def put(self, idUsuario):
         data = request.get_json()
-        print(data['grupo'])
-        usuario = Usuario.query.filter_by(id=idUsuario).first()
         
-        if not usuario:
-            return {"message": "Usuário não encontrado"}, 404
-        
-        if 'cpf' in data:
-            usuario.cpf = data['cpf']
-        if 'login' in data:
-            usuario.login = data['login']
-        if 'email' in data:
-            usuario.email = data['email']
-        if 'senha' in data:
-            usuario.senha = data['senha']
-        if 'fk_id_grupo' in data:
-            usuario.fk_id_grupo = data['grupo']
-        if 'fk_id_perfil' in data:
-            usuario.fk_id_perfil = data['perfil']
-        if 'nome' in data:
-            usuario.nome = data['nome']
-        if 'ra' in data:
-            usuario.ra = data['ra']
-        
+        usuario = Usuario.query.get(idUsuario)
+
+        usuario.cpf = data['cpf']
+        usuario.login = data['login']
+        usuario.email = data['email']
+        usuario.senha = data['senha']
+        usuario.fk_id_grupo = data['grupo']
+        usuario.fk_id_perfil = data['perfil']
+        usuario.nome = data['nome']
+        usuario.ra = data['ra']
+
         db.session.commit()
         
         response = make_response({"message": "Usuário editado com sucesso"}, 200)
@@ -240,10 +229,20 @@ class GetDisciplina(Resource):
 class SalvaDisciplina(Resource):
     def post(self):
         dados = request.get_json()
-        disciplina = Disciplina(titulo=dados['titulo'], ementa=dados['ementa'])
+        titulo = dados['titulo']
+        ementa = dados['ementa']
+
+        # Check if the discipline already exists in the database
+        existing_discipline = Disciplina.query.filter_by(titulo=titulo).first()
+        if existing_discipline:
+            return make_response({"message": "Disciplina já cadastrada!"}, 400)
+
+        # If the discipline doesn't exist, create and save it
+        disciplina = Disciplina(titulo=titulo, ementa=ementa)
         db.session.add(disciplina)
         db.session.commit()
         return make_response({"message": "Disciplina salva com sucesso!"}, 200)
+
     
 class AtualizaDisciplina(Resource):
     def put(self, disciplinaId):
@@ -283,15 +282,26 @@ class GetEquipe(Resource):
 class SalvaEquipe(Resource):
     def post(self):
         dados = request.get_json()
-        equipe = Equipe(apelido=dados['apelido'], nome_projeto=dados['nome_projeto'])
+        apelido = dados['apelido']
+        nome_projeto = dados['nome_projeto']
+
+        # Verifica se a equipe já existe no banco de dados
+        equipe_existente = Equipe.query.filter_by(apelido=apelido, nome_projeto=nome_projeto).first()
+        if equipe_existente:
+            return make_response({"message": "Equipe já existe"}, 400)
+
+        # Cria uma nova equipe e a adiciona ao banco de dados
+        equipe = Equipe(apelido=apelido, nome_projeto=nome_projeto)
         db.session.add(equipe)
         db.session.commit()
+
         return make_response({"message": "Equipe salva com sucesso!"}, 200)
+
     
 class AtualizaEquipe(Resource):
     def put(self, id):
         dados = request.get_json()
-        equipe = Equipe.query.filter_by(id=id).all()
+        equipe = Equipe.query.get(id)
 
         equipe.apelido = dados['apelido']
         equipe.nome_projeto = dados['nome_projeto']
@@ -323,7 +333,15 @@ class GetSala(Resource):
 class SalvaSala(Resource):
     def post(self):
         dados = request.get_json()
-        sala = Sala(numero=dados['numero'], turno='')
+        numero_sala = dados['numero']
+
+        # Check if the room already exists
+        existing_sala = Sala.query.filter_by(numero=numero_sala).first()
+        if existing_sala:
+            return make_response({"message": "Sala já cadastrada"}, 400)
+
+        # Room does not exist, create and save it
+        sala = Sala(numero=numero_sala, turno='')
         db.session.add(sala)
         db.session.commit()
         return make_response({"message": "Sala salva com sucesso!"}, 200)
@@ -331,10 +349,10 @@ class SalvaSala(Resource):
 class AtualizaSala(Resource):
     def put(self, id):
         dados = request.get_json()
-        sala = Sala.query.filter_by(id=id).all()
+        sala = Sala.query.get(id)
 
         sala.numero = dados['numero']
-        sala.turno = dados['turno']
+        sala.turno = ''
 
         db.session.commit()
         return make_response({"message": "Sala editada com sucesso!"}, 200)
@@ -350,3 +368,30 @@ class DeleteSala(Resource):
         db.session.commit()
 
         return make_response({"message": "Sala deletada com sucesso!"}, 200)
+    
+
+class AtualizaHabilidades(Resource):
+    def put(self):
+        dados = request.get_json()
+        for chave, valor in dados.items():
+            habilidade = HabilidadeAtitude.query.filter_by(titulo=chave).first()
+            if habilidade:
+                habilidade.fator_peso = valor
+                db.session.commit()
+            else:
+                return make_response({"message": f"Habilidade '{chave}' não encontrada"}, 404)
+        return make_response({"message": "Habilidades editadas com sucesso!"}, 200)
+    
+
+class DeleteTurma(Resource):
+    def delete(self, id):
+        turma = Turma.query.get(id)
+
+        if turma is None:
+            return make_response({"message": "Turma não encontrada"}, 404)
+                
+        db.session.delete(turma)
+        
+        db.session.commit()
+
+        return make_response({"message": "Turma deletada com sucesso!"}, 200)

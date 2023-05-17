@@ -56,8 +56,10 @@
                 }
             });
         }
+
         function buscaAvaliacoes(id, idTurma) {
-            console.log(idTurma)
+            localStorage.setItem('turmaEditaId', id)
+            localStorage.setItem('turmaEdita', idTurma)
             $.ajax({
                 url: "/tabela-avaliacao-turma/" + id + "/" + idTurma,
                 method: "GET",
@@ -71,6 +73,23 @@
                 }
             });
         }
+
+        function deletaTurma(id) {
+            if (confirm('Deseja realmente deletar essa turma?')) {
+                $.ajax({
+                    url: "/api/v1/turma/" + id,
+                    method: "DELETE",
+                    success: function (response) {
+                        toastr.success(response.message);
+                        voltar();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(jqXHR.responseJSON.message);
+                    }
+                });
+            }
+        }
+
         function voltar() {
             window.location.replace("/usuarios");
         }
@@ -104,10 +123,14 @@
                             <i class="bi bi-mortarboard-fill"></i>
                         </button>
                         <button type="submit" class="btn btn-primary" data-id="{{ item.id }}"
-                        data-idturma="{{ item.id_turma }}" data-toggle="tooltip"
-                            data-placement="top" title="Avaliações"
-                            onclick="buscaAvaliacoes(this.getAttribute('data-id'), this.getAttribute('data-idturma'))"><i
-                                class="bi bi-layout-text-sidebar-reverse"></i></button>
+                            data-idturma="{{ item.id_turma }}" data-toggle="tooltip" data-placement="top" title="Avaliações"
+                            onclick="buscaAvaliacoes(this.getAttribute('data-id'), this.getAttribute('data-idturma'))">
+                            <i class="bi bi-layout-text-sidebar-reverse"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" data-idturma="{{ item.id_turma }}" data-toggle="tooltip"
+                            data-placement="top" title="Excluir" onclick="deletaTurma(this.getAttribute('data-idturma'))">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
