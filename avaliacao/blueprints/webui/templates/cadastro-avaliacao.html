@@ -67,6 +67,12 @@
               $(this).hide();
             }
           });
+
+          // Check if there are no visible options and reset the selected value
+          var visibleOptions = $("#turmas option:visible");
+          if (visibleOptions.length === 0) {
+            $("#turmas").val('').trigger('change');
+          }
         } else {
           $("#turmas").prop("disabled", true);
         }
@@ -94,7 +100,8 @@
       </div>
       <div class="form-group">
         <label for="nome">Nome da Avaliação:</label>
-        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação" required>
+        <input type="text" class="form-control" id="nome" name="avaliacao" placeholder="Digite o nome da avaliação"
+          required>
       </div>
       <div class="form-group">
         <label for="descricao">Descrição:</label>
