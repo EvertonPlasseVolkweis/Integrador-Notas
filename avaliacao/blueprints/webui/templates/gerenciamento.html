@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+<html>
+{% block head %}
+
+<head>
+    <title>Cadastro de Sala</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    {% set editando_js = "true" if editando else "false" %}
+    <script>
+        $(function () {
+            $('#meu-form').on('submit', function (event) {
+                event.preventDefault(); // Previne o envio padrão do formulário
+
+                var url = $(this).attr('action'); // Obtém a URL definida na ação do formulário
+                var dados = $(this).serializeArray(); // Obtém os dados do formulário como um array de objetos {name, value}
+                var editando = '{{ editando_js }}' === 'true'; // Pega o valor de editando do jinja
+
+                // Converte os dados para um objeto JSON
+                var dados_json = {};
+                $.each(dados, function () {
+                    dados_json[this.name] = this.value;
+                });
+
+                console.log(dados_json)
+
+                // Envia a requisição POST com o cabeçalho Content-Type: application/json
+                $.ajax({
+                    url: url,
+                    type: editando ? 'PUT' : 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dados_json),
+                    success: function (resultado) {
+                        // Processa a resposta da requisição
+                        toastr.success("Sucesso!");
+                        setTimeout(redirecionaHome())
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(jqXHR.responseJSON.message);
+                        console.error(errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+{% endblock %}
+{% block content %}
+
+
+<body>
+    <div class="container">
+        <h2>Pesos Avaliação360</h2>
+        <form id="meu-form" action="{{ '/api/v1/habilidades/' if editando else '/api/v1/habilidades/' }}">
+            <div class="row">
+                {% for habilidade in habilidades %}
+                <div class="col-md-6"> <!-- Aqui, 'md' significa 'medium devices' e '6' é a largura da coluna -->
+                    <div class="form-group">
+                        <label for="{{habilidade.titulo}}">{{habilidade.titulo}}:</label>
+                        {% if visualizando == True or editando == True%}
+                        <input disabled type="text" class="form-control" name="{{habilidade.titulo}}"
+                            placeholder="Digite o fator peso" value="{{habilidade.fator_peso}}">
+                        {% else %}
+                        <input disabled type="text" class="form-control" name="{{habilidade.titulo}}"
+                            placeholder="Digite o fator peso">
+                        {% endif %}
+                    </div>
+                </div>
+                {% if loop.index is divisibleby 2 %} <!-- A cada duas habilidades, cria uma nova linha -->
+            </div>
+            <div class="row">
+                {% endif %}
+                {% endfor %}
+            </div>
+            <!-- {% if visualizando != True %}
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            {% endif %} -->
+        </form>
+    </div>
+</body>
+{% endblock %}
+
+</html>

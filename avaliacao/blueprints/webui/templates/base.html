@@ -160,6 +160,9 @@
                         {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
                         <a class="dropdown-item" href="/usuarios">Usuários</a>
                         {% endif %}
+                        {% if perfil.perfil == "admin"%}
+                        <a class="dropdown-item" href="/gerenciamento">Gerenciar Pesos</a>
+                        {% endif %}
                         {% if perfil.perfil == "aluno"%}
                         <a class="dropdown-item" href="/usuarios">Boletim</a>
                         {% endif %}

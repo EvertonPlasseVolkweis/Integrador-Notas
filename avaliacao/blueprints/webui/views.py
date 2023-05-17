@@ -257,8 +257,10 @@ def visualiza_avaliacao(item_id):
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     matriz = MATRIZ_AVALIACAO
     avaliacao = Avaliacao.query.filter_by(id=item_id).first()
+    turmaId = avaliacao.fk_id_turma
+    tipoAvaliacao = avaliacao.tipo_avaliacao
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
-    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=True, perfil=perfil)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, turmaId=turmaId, notaAvalia=notaAvalia, visualizando=True, perfil=perfil, tipoAvaliacao=tipoAvaliacao)
 
 
 @login_required
@@ -271,9 +273,10 @@ def edita_avaliacao(item_id):
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     matriz = MATRIZ_AVALIACAO
     avaliacao = Avaliacao.query.filter_by(id=item_id).first()
+    turmaId = avaliacao.fk_id_turma
     tipoAvaliacao = avaliacao.tipo_avaliacao
     notaAvalia = NotaAvalia.query.filter_by(fk_id_avaliacao=avaliacao.id).all()
-    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, tipoAvaliacao=tipoAvaliacao, avaliacaoId=item_id)
+    return render_template("inserir.html", matriz_avaliacao=matriz, grupo=grupo, turmaId=turmaId, notaAvalia=notaAvalia, visualizando=False, editando=True, perfil=perfil, tipoAvaliacao=tipoAvaliacao, avaliacaoId=item_id)
 
 @login_required
 def edita_disciplina(id):
@@ -297,7 +300,7 @@ def edita_equipe(id):
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     equipe = Equipe.query.filter_by(id=id).first()
-    return render_template("form-equipe.html", visualizando=False, editando=True, dados=equipe, perfil=perfil)
+    return render_template("form-equipe.html", visualizando=False, editando=True, dados=equipe, id=equipe.id, perfil=perfil)
 
 @login_required
 def visualiza_equipe(id):
@@ -313,7 +316,7 @@ def edita_sala(id):
     idUsuario = get_jwt_identity()
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
-    return render_template("form-sala.html", visualizando=False, editando=True, dados=sala, perfil=perfil)
+    return render_template("form-sala.html", visualizando=False, editando=True, dados=sala, id=sala.id, perfil=perfil)
 
 @login_required
 def visualiza_sala(id):
@@ -494,3 +497,12 @@ def formSalaView():
     user = Usuario.query.filter_by(id=idUsuario).first()
     perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
     return render_template("form-sala.html", perfil=perfil)
+
+
+@admin_required
+def gerenciamento():
+    idUsuario = get_jwt_identity()
+    user = Usuario.query.filter_by(id=idUsuario).first()
+    perfil = Perfil.query.filter_by(id=user.fk_id_perfil).first()
+    habilidades = HabilidadeAtitude.query.all()
+    return render_template("gerenciamento.html", perfil=perfil, habilidades=habilidades, editando=True)
