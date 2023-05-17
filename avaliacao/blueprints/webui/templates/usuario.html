@@ -115,7 +115,7 @@
     <div class="container">
         {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
         <div class="header">
-            <h1>Tabela Usuários</h1>
+            <h1>Usuários</h1>
             {% if perfil.perfil == "admin"%}
             <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Cadastrar"  onclick="window.location.replace('/cadastro-usuario')">
                 <i class="bi bi-plus"></i>
@@ -124,7 +124,7 @@
         </div>
         {% endif %}
         {% if perfil.perfil == "aluno"%}
-        <h1>Tabela Aluno</h1>
+        <h1>Aluno</h1>
         {% endif %}
         <table class="table">
             <thead>
