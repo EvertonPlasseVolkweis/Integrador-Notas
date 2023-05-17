@@ -127,10 +127,12 @@
                             onclick="buscaAvaliacoes(this.getAttribute('data-id'), this.getAttribute('data-idturma'))">
                             <i class="bi bi-layout-text-sidebar-reverse"></i>
                         </button>
+                        {% if perfil.perfil == "professor" or perfil.perfil == "admin"%}
                         <button type="button" class="btn btn-danger" data-idturma="{{ item.id_turma }}" data-toggle="tooltip"
                             data-placement="top" title="Excluir" onclick="deletaTurma(this.getAttribute('data-idturma'))">
                             <i class="bi bi-trash"></i>
                         </button>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
