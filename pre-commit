@@ -1,0 +1,9 @@
+#!/bin/sh
+# Atribua o caminho do seu ambiente virtual, se aplicável
+# . /caminho/do/seu/env/bin/activate
+# Executa o pytest
+pytest
+# Se o pytest falhar, retorne 1 que impedirá o commit
+if [ $? -ne 0 ]; then
+ exit 1
+fi

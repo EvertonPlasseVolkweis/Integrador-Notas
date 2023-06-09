@@ -1,28 +1,19 @@
-from decimal import Decimal
+from faker import Faker
 
+# Cria um gerador de dados falsos
+fake = Faker(['pt_BR'])
 
-def test_products_get_all(client, products):  # Arrange
-    """Test get all products"""
-    # Act
-    response = client.get("/api/v1/product/")
-    # Assert
+def test_create_user(client):
+    # Teste de criação de usuário
+    response = client.post('/api/v1/cadastro-usuario', json={
+        'cpf': fake.cpf(), # Gera um CPF aleatório
+        'nome': fake.name(), # Gera um nome aleatório
+        'email': fake.email(), # Gera um email aleatório
+        'ra': fake.random_number(digits=6, fix_len=True), # Gera um RA aleatório
+        'login': fake.user_name(), # Gera um nome de usuário aleatório
+        'senha': fake.password(), # Gera uma senha aleatória
+        'grupo': fake.random_element(elements=(1,2,3,4,5)), # Gera um grupo aleatório
+        'perfil': fake.random_element(elements=(1,2,3,4,5)), # Gera um perfil aleatório
+    })
+
     assert response.status_code == 200
-    data = response.json["products"]
-    assert len(data) == 3
-    for product in products:
-        assert product.id in [item["id"] for item in data]
-        assert product.name in [item["name"] for item in data]
-        assert product.price in [Decimal(item["price"]) for item in data]
-
-
-def test_products_get_one(client, products):  # Arrange
-    """Test get all products"""
-    for product in products:
-        # Act
-        response = client.get(f"/api/v1/product/{product.id}")
-        data = response.json
-        # Assert
-        assert response.status_code == 200
-        assert data["name"] == product.name
-        assert Decimal(data["price"]) == product.price
-        assert data["description"] == product.description

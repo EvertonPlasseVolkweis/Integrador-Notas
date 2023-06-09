@@ -10,7 +10,7 @@ pip install -r requirements_test.txt
 
 Rodar o comando flask run para inicia o projeto(necessario estar na pasta avaliação)
 
-LOGINS
-Admin - email: dani@admin senha: 123123
-Professor - email: felipe@professor senha:123123
-Aluno - email: everton@aluno senha:123123
+Logins do sistema             senha
+Admin: dani@admin.com         123123
+Professor: felipe@professor   123123
+Aluno: everton@aluno          123123
