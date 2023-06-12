@@ -1,11 +1,13 @@
-from sqlalchemy import text
 from datetime import datetime
-from flask import abort, jsonify, make_response, redirect, render_template, request, url_for
+
+from flask import (abort, jsonify, make_response, redirect, render_template,
+                   request, url_for)
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, reqparse
-from avaliacao.ext.database import db
+from sqlalchemy import text
 from sqlalchemy.orm.exc import NoResultFound
-from flask import abort
+
+from avaliacao.ext.database import db
 from avaliacao.models import *
 
 

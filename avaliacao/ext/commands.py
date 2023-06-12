@@ -1,10 +1,14 @@
+from datetime import datetime
+
 import click
 from sqlalchemy import null
-from avaliacao.ext.database import db
+
 from avaliacao.ext.auth import create_user
-from avaliacao.models import Avaliacao, Disciplina, Equipe, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Sala, Usuario, Turma
+from avaliacao.ext.database import db
 from avaliacao.ext.main import MATRIZ_AVALIACAO
-from datetime import datetime
+from avaliacao.models import (Avaliacao, Disciplina, Equipe, Grupo,
+                              HabilidadeAtitude, NotaAvalia, Perfil, Sala,
+                              Turma, Usuario)
 
 habilidades_atitudes = MATRIZ_AVALIACAO[1][1]
 def insert_habilidade():
