@@ -230,7 +230,6 @@ def visualiza_media():
         sub_lista.append(elemento)
         contagem += 1
     sub_listas.append(sub_lista)
-
     for notinha in sub_listas:
         newNotas = []
         for categoria in MATRIZ_AVALIACAO:
