@@ -1,6 +1,8 @@
 # conftest.py
 import pytest
+
 from avaliacao.app import create_app
+
 
 @pytest.fixture
 def app():

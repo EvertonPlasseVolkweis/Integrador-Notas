@@ -12,7 +12,7 @@ from avaliacao.models import Usuario
 AdminIndexView._handle_view = login_required(AdminIndexView._handle_view)
 sqla.ModelView._handle_view = login_required(sqla.ModelView._handle_view)
 admin = Admin()
-
+has_been_run = False
 
 class UserAdmin(sqla.ModelView):
     column_list = ['username']
@@ -23,7 +23,10 @@ class UserAdmin(sqla.ModelView):
 
 
 def init_app(app):
-    admin.name = app.config.TITLE
-    admin.template_mode = "bootstrap3"
-    admin.init_app(app)
-    admin.add_view(UserAdmin(Usuario, db.session))
+    global has_been_run
+    if not has_been_run:
+        admin.name = app.config.TITLE
+        admin.template_mode = "bootstrap3"
+        admin.init_app(app)
+        admin.add_view(UserAdmin(Usuario, db.session))
+        has_been_run = True

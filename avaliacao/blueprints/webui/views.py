@@ -1,14 +1,19 @@
+import json
 from collections import Counter
 from functools import wraps
-from flask import abort, redirect, render_template, request
-from flask_jwt_extended import decode_token, get_jwt_identity, jwt_required, verify_jwt_in_request
-from avaliacao.ext.main import MATRIZ_AVALIACAO, calcular_media, MATRIZ_AVALIACAO_TESTE
-from avaliacao.models import Avaliacao, Grupo, HabilidadeAtitude, NotaAvalia, Perfil, Usuario, Turma, Sala, Disciplina, Equipe
-from avaliacao.ext.database import db
+
+from flask import (abort, flash, jsonify, redirect, render_template, request,
+                   url_for)
+from flask_jwt_extended import (decode_token, get_jwt_identity, jwt_required,
+                                verify_jwt_in_request)
 from sqlalchemy import text
-from flask import flash, redirect, url_for
-from flask import jsonify
-import json
+
+from avaliacao.ext.database import db
+from avaliacao.ext.main import (MATRIZ_AVALIACAO, MATRIZ_AVALIACAO_TESTE,
+                                calcular_media)
+from avaliacao.models import (Avaliacao, Disciplina, Equipe, Grupo,
+                              HabilidadeAtitude, NotaAvalia, Perfil, Sala,
+                              Turma, Usuario)
 
 
 def login_required(view_function):

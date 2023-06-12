@@ -1,12 +1,19 @@
+"""
+Este é o módulo app.py.
+Ele contém a configuração do aplicativo Flask.
+"""
 from datetime import timedelta
-from flask import Flask, redirect, url_for
+
+from flask import Flask
 from flask_jwt_extended import JWTManager
+
 from avaliacao.ext import configuration
 
-# def jwt_error_handler(jwt_header_error):
-#     return redirect(url_for("webui.login"))
 
 def minimal_app(**config):
+    """
+    Esta função cria e configura um aplicativo Flask mínimo.
+    """
     app = Flask(__name__)
     configuration.init_app(app, **config)
     # Substitua `app` pelo seu objeto Flask
@@ -14,11 +21,23 @@ def minimal_app(**config):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
-    jwt = JWTManager(app)
+    
+    # Importe e inicialize a extensão `api` aqui
+    from avaliacao.blueprints.restapi import api
+    api.init_app(app)
+    
     return app
 
 
 def create_app(**config):
+    """
+    Esta função cria e configura um aplicativo Flask completo.
+    """
     app = minimal_app(**config)
+    # Importe e inicialize a extensão `api` aqui também, se necessário
+    from avaliacao.blueprints.restapi import api
+    api.init_app(app)
+    
     configuration.load_extensions(app)
     return app
+
