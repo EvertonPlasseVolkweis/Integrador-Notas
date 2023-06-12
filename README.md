@@ -14,3 +14,7 @@ Logins do sistema             senha
 Admin: dani@admin.com         123123
 Professor: felipe@professor   123123
 Aluno: everton@aluno          123123
+
+pylint pyflakes isort
+copiar pre-commit
+cp pre-commit .git/hooks

@@ -1,6 +1,8 @@
 from datetime import datetime
-from avaliacao.ext.database import db
+
 from sqlalchemy_serializer import SerializerMixin
+
+from avaliacao.ext.database import db
 
 
 class Usuario(db.Model, SerializerMixin):

@@ -1,6 +1,7 @@
 from flask import Blueprint
 
 from .views import *
+
 bp = Blueprint("webui", __name__, template_folder="templates")
 
 ## inicialização para rotas de tela: html

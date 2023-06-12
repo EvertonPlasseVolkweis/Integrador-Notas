@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
-from .resources import *
 
+from .resources import *
 
 ## inicialização para rotas de controladora chamando classes resources
 
