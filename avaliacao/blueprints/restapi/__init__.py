@@ -11,8 +11,9 @@ api = Api(bp)
 
 def init_app(app):
     ## modelo de busca: localhost/api/v1/usuarios/
-    api.add_resource(UsuariosResource, "/usuarios/")
     api.add_resource(CadastroAvaliacaoResource, "/avaliacao/cadastro/<int:idUsuario>")
+    api.add_resource(CadastroAvaliacaoTeste, "/avaliacao/cadastro-teste")
+    api.add_resource(UsuariosResource, "/usuarios/")
     api.add_resource(NotaAvaliaResource, "/nota-avalia/cadastro")
     api.add_resource(BuscarUsuario, "/busca-usuario")
     api.add_resource(CadastroUsuario, "/cadastro-usuario")

@@ -1,21 +1,25 @@
 # #!/bin/sh
+
 # # Atribua o caminho do seu ambiente virtual, se aplicável
 # # . /caminho/do/seu/env/bin/activate
 
+# # Encontra todos os arquivos .py no diretório atual e em seus subdiretórios
+# files=$(find . -name '*.py')
+
 # # Executa o pylint
-# pylint **/*.py
+# find . -name '*.py' | xargs pylint
 # if [ $? -ne 0 ]; then
 #  exit 1
 # fi
 
 # # Executa o pyflakes
-# pyflakes **/*.py
+# find . -name '*.py' | xargs pyflakes
 # if [ $? -ne 0 ]; then
 #  exit 1
 # fi
 
 # # Executa o isort
-# isort **/*.py
+# find . -name '*.py' | xargs isort
 # if [ $? -ne 0 ]; then
 #  exit 1
 # fi

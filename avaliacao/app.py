@@ -34,10 +34,6 @@ def create_app(**config):
     Esta função cria e configura um aplicativo Flask completo.
     """
     app = minimal_app(**config)
-    # Importe e inicialize a extensão `api` aqui também, se necessário
-    from avaliacao.blueprints.restapi import api
-    api.init_app(app)
-    
     configuration.load_extensions(app)
     return app
 
