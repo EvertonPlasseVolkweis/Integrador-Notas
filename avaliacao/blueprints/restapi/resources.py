@@ -141,6 +141,27 @@ class CadastroUsuario(Resource):
         return response
     
 
+class CadastroAvaliacaoTeste(Resource):
+    def post(self):
+        dados = request.get_json()
+        print(dados)
+        titulo = dados['titulo']
+        descricao = dados['descricao']
+        tipo_avaliacao = dados['tipo_avaliacao']
+        data_inicio = dados['data_inicio']
+        data_fim = dados['data_fim']
+        tem_nota = dados['tem_nota']
+        fk_id_usuario = dados['fk_id_usuario']
+        fk_id_usuario_avaliador = dados['fk_id_usuario_avaliador']
+        fk_id_turma = dados['fk_id_turma']
+        avaliacao = Avaliacao(titulo=titulo, descricao=descricao, tipo_avaliacao=tipo_avaliacao, data_inicio=data_inicio,
+                          data_fim=data_fim, tem_nota=tem_nota, fk_id_usuario=fk_id_usuario, fk_id_usuario_avaliador=fk_id_usuario_avaliador, fk_id_turma=fk_id_turma)
+        db.session.add(avaliacao)
+        db.session.commit()
+        response = make_response({"message": "avaliacao salvo"}, 200)
+        return response
+    
+
 
 class CadastroTurma(Resource):
     def post(self):

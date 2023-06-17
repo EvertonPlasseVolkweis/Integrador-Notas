@@ -42,7 +42,7 @@ DEBUG_TB_PANELS = [
 ]
 
 [testing]
-SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///avaliacao_bpk.db'
 
 [production]
 SQLALCHEMY_DATABASE_URI = 'sqlite:///production.db'

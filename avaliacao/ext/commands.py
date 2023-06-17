@@ -72,6 +72,20 @@ def drop_db():
     """Cleans database"""
     db.drop_all()
 
+
+def populate_db():
+    """Populate db with sample data"""
+    data = [
+        Sala(
+            id=1, numero="1", turno="a"
+        ),
+        Sala(id=2, numero="2", turno="a"),
+        Sala(id=3, numero="3", turno="a"),
+    ]
+    db.session.bulk_save_objects(data)
+    db.session.commit()
+    return Sala.query.all()
+
 def insert_avaliacao():
     nova_avaliacao = Avaliacao(titulo='Avaliação 1', descricao='Primeira Avaliação', 
         data_inicio=20220310, data_fim=20220315, fk_id_usuario=1)

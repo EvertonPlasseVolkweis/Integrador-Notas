@@ -1,19 +1,26 @@
-# conftest.py
 import pytest
 
-from avaliacao.app import create_app
+from avaliacao.app import create_app, minimal_app
+from avaliacao.ext.commands import populate_db
+from avaliacao.ext.database import db
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
+def min_app():
+    app = minimal_app(FORCE_ENV_FOR_DYNACONF="testing")
+    return app
+
+
+@pytest.fixture(scope="session")
 def app():
-    """Crie e configure uma nova instância de aplicativo para os testes."""
-    # Inicialize a aplicação com a configuração de testes
-    app = create_app()
-    app.config['TESTING'] = True
+    app = create_app(FORCE_ENV_FOR_DYNACONF="testing")
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
 
-    yield app
 
-@pytest.fixture
-def client(app):
-    """Um cliente de teste para o aplicativo."""
-    return app.test_client()
+@pytest.fixture(scope="session")
+def products(app):
+    with app.app_context():
+        return populate_db()

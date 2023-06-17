@@ -16,3 +16,4 @@ flask-jwt-extended==4.4.4
 dash_bootstrap_components
 faker==18.10.1
 pylint==2.17.4
+nose2==0.13.0
