@@ -166,11 +166,15 @@ class CadastroAvaliacaoTeste(Resource):
 class CadastroTurma(Resource):
     def post(self):
         dados = request.get_json()
+        fk_id_usuario = dados['usuario']
+        fk_id_sala=dados['sala']
+        fk_id_disciplina=dados['disciplina']
+        fk_id_equipe=dados['equipe']
         print(dados)
-        turma_existente = Turma.query.filter_by(fk_id_usuario=dados['usuario'], fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina']).first()
+        turma_existente = Turma.query.filter_by(fk_id_usuario=fk_id_usuario, fk_id_sala=fk_id_sala, fk_id_disciplina=fk_id_disciplina).first()
         if turma_existente:
             return {"message": "Usuario já matriculado na disciplina"}, 400
-        nova_turma = Turma(fk_id_usuario=dados['usuario'], fk_id_sala=dados['sala'], fk_id_disciplina=dados['disciplina'], fk_id_equipe=dados['equipe'], fk_id_avaliacao=0)
+        nova_turma = Turma(fk_id_usuario=fk_id_usuario, fk_id_sala=fk_id_sala, fk_id_disciplina=fk_id_disciplina, fk_id_equipe=fk_id_equipe, fk_id_avaliacao=0)
         db.session.add(nova_turma)
         db.session.commit()
         response = make_response({"message": "Turma salva"}, 200)
