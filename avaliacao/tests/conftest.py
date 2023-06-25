@@ -4,7 +4,6 @@ from avaliacao.app import create_app, minimal_app
 from avaliacao.ext.commands import populate_db
 from avaliacao.ext.database import db
 
-
 @pytest.fixture(scope="session")
 def min_app():
     app = minimal_app(FORCE_ENV_FOR_DYNACONF="testing")
@@ -17,7 +16,12 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
-        db.drop_all()
+        # db.drop_all()
+
+@pytest.fixture(scope="session")
+def client(app):
+    with app.test_client() as client:
+        yield client
 
 
 @pytest.fixture(scope="session")

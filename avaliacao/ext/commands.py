@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from avaliacao.app import create_app
 import click
 from sqlalchemy import null
 
@@ -62,6 +62,36 @@ def insert_turma():
     nova_turma = Turma(fk_id_usuario=1, fk_id_sala=1, fk_id_disciplina=1, fk_id_equipe=1, fk_id_avaliacao=0)
     db.session.add(nova_turma)
     db.session.commit()
+
+def create_db_test():
+    """Creates database"""
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+
+
+def drop_db_test():
+    """Cleans database"""
+    app = create_app()
+    with app.app_context():
+        db.drop_all()
+
+
+def populate_db_test():
+    """Populate db with sample data"""
+    app = create_app()
+    with app.app_context():
+        data = [
+            Sala(
+                id=1, numero="1", turno="a"
+            ),
+            Sala(id=2, numero="2", turno="a"),
+            Sala(id=3, numero="3", turno="a"),
+        ]
+        db.session.bulk_save_objects(data)
+        db.session.commit()
+        return Sala.query.all()
+
 
 def create_db():
     """Creates database"""
