@@ -17,3 +17,7 @@ dash_bootstrap_components
 faker==18.10.1
 pylint==2.17.4
 nose2==0.13.0
+pytest==7.3.2
+pylint==2.17.4
+pyflakes==3.0.1
+isort==5.12.0
