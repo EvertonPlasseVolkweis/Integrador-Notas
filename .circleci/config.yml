@@ -1,87 +1,87 @@
-# version: 2.1
-# executors:
-#   python-executor:
-#     docker:
-#       - image: python:3.11
-# jobs:
-#   test:
-#     executor: python-executor
-#     working_directory: /root/biopark-grupo2
-#     steps:
-#       - checkout
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             python -m pip install -r requirements.txt
-#       - run:
-#           name: Run tests
-#           command: |
-#             pytest
-#   lint:
-#     executor: python-executor
-#     working_directory: /root/biopark-grupo2
-#     steps:
-#       - checkout
-#       - run:
-#           name: Install linting dependencies
-#           command: |
-#             python -m pip install pylint pyflakes isort
-#       - run:
-#           name: Run pylint
-#           command: |
-#             pylint **/*.py
-#       - run:
-#           name: Run pyflakes
-#           command: |
-#             pyflakes **/*.py
-#       - run:
-#           name: Run isort
-#           command: |
-#             isort --check-only **/*.py
-#   # migrate_db:
-#   #     executor: python-executor
-#   #     working_directory: /root/biopark-grupo2
-#   #     steps:
-#   #       - checkout
-#   #       - run:
-#   #           name: Install dependencies
-#   #           command: |
-#   #             python -m pip install -r requirements.txt
-#   #       - run:
-#   #           name: Migrate database
-#   #           command: |
-#   #             python -c "from avaliacao.ext.commands import create_db, drop_db, populate_db; drop_db(); create_db(); populate_db()"
-#   # delivery:
-#   #   # working_directory: ~/project
-#   #   docker:
-#   #     - image: cimg/base:stable
-#   #   steps:
-#   #     - checkout
-#   #     - when:
-#   #         condition:
-#   #           equal: [ master, << pipeline.git.branch >> ]
-#   #         steps:
-#   #           - run:
-#   #                 name: "delivery step 1"
-#   #                 command: "echo delivery 1: entregando uma nova versão (release)!"             
-#   # deploy:
-#   #   # working_directory: ~/project
-#   #   docker:
-#   #     - image: cimg/base:stable
-#   #   steps:
-#   #     - checkout
-#   #     - when:
-#   #         condition:
-#   #           equal: [ main, << pipeline.git.branch >> ]
-#   #         steps:
-#   #           - run:
-#   #                 name: "deploy step 1"
-#   #                 command: "echo deploy 1: implantando a nova versão (stable)!"
-#   #                 # command: deploy-dev.sh
-#   #                 # when: manual
-# workflows:
-#   version: 2
-#   pipeline:
-#     jobs:
-#       - test
-#       - lint
+version: 2.1
+executors:
+  python-executor:
+    docker:
+      - image: python:3.11
+jobs:
+  test:
+    executor: python-executor
+    working_directory: /root/biopark-grupo2
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            pytest
+  lint:
+    executor: python-executor
+    working_directory: /root/biopark-grupo2
+    steps:
+      - checkout
+      - run:
+          name: Install linting dependencies
+          command: |
+            python -m pip install pylint pyflakes isort
+      - run:
+          name: Run pylint
+          command: |
+            pylint **/*.py
+      - run:
+          name: Run pyflakes
+          command: |
+            pyflakes **/*.py
+      - run:
+          name: Run isort
+          command: |
+            isort --check-only **/*.py
+  # migrate_db:
+  #     executor: python-executor
+  #     working_directory: /root/biopark-grupo2
+  #     steps:
+  #       - checkout
+  #       - run:
+  #           name: Install dependencies
+  #           command: |
+  #             python -m pip install -r requirements.txt
+  #       - run:
+  #           name: Migrate database
+  #           command: |
+  #             python -c "from avaliacao.ext.commands import create_db, drop_db, populate_db; drop_db(); create_db(); populate_db()"
+  # delivery:
+  #   # working_directory: ~/project
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
+  #     - when:
+  #         condition:
+  #           equal: [ master, << pipeline.git.branch >> ]
+  #         steps:
+  #           - run:
+  #                 name: "delivery step 1"
+  #                 command: "echo delivery 1: entregando uma nova versão (release)!"             
+  # deploy:
+  #   # working_directory: ~/project
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
+  #     - when:
+  #         condition:
+  #           equal: [ main, << pipeline.git.branch >> ]
+  #         steps:
+  #           - run:
+  #                 name: "deploy step 1"
+  #                 command: "echo deploy 1: implantando a nova versão (stable)!"
+  #                 # command: deploy-dev.sh
+  #                 # when: manual
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - test
+      - lint
